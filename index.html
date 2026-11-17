@@ -326,6 +326,13 @@ table.rt tbody tr:not(.grp):not(.ghead):hover td { background: hsl(var(--accent)
 .dark .stip .c.up { color: hsl(358 64% 46%); } .dark .stip .c.down { color: hsl(158 80% 28%); }
 
 /* ── Feedback ──────────────────────────────────────────────────────────── */
+.contact { padding: 32px 0 8px; max-width: 640px; }
+.contact h2 { font-size: 20px; font-weight: 600; line-height: 1.4; margin: 0 0 8px; }
+.cinfo { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 14px 32px; margin: 24px 0 0; font-size: 15px; }
+.cinfo dt { color: hsl(var(--muted-foreground)); }
+.cinfo dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+.cinfo a { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: hsl(var(--border)); }
+.cinfo a:hover { text-decoration-color: hsl(var(--brand)); }
 .fb { margin-top: 64px; padding: 32px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background: hsl(var(--card)); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 16px 48px; }
 .fb h2 { font-size: 20px; font-weight: 600; line-height: 1.4; margin: 0 0 8px; }
 .fbsub { color: hsl(var(--muted-foreground)); font-size: 14px; margin: 0; }
@@ -363,6 +370,9 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
   .tabs a[aria-current="page"]::after { left: 8px; right: 8px; }
   .tabs a[aria-current="page"]::after { bottom: -8px; }
   .hero { padding: 32px 0 24px; }
+  .cinfo { grid-template-columns: 1fr; gap: 2px; }
+  .cinfo dt { margin-top: 12px; }
+  .cinfo dt:first-child { margin-top: 0; }
   .hero-main { gap: 18px; }
   .hero-logo { width: 96px; }
   h1 { font-size: 30px; }
@@ -404,6 +414,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
       <a href="#refs" data-view="refs">เกณฑ์อ้างอิง</a>
       <a href="#prices" data-view="prices">ดัชนีราคา</a>
       <a href="#materials" data-view="materials">ราคาวัสดุ</a>
+      <a href="#contact" data-view="contact">ติดต่อเรา</a>
     </nav>
     <div class="bar-end">
       <span class="when" id="lastUpdate">อัปเดตทุกจันทร์และศุกร์</span>
@@ -466,6 +477,23 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     <div id="prices"></div>
   </div>
 
+  <div id="view-contact" hidden>
+    <section class="contact" aria-labelledby="contacth">
+      <h2 id="contacth">ติดต่อเรา</h2>
+      <p class="fbsub">ส่งคำถามหรือขอใช้บริการได้ทางช่องทางด้านล่าง</p>
+      <dl class="cinfo">
+        <dt>ชื่อนิติบุคคล</dt>
+        <dd>บริษัท เดอะ 29 คอนสตรัคชั่น แอนด์ แมเนจเนมท์ จำกัด</dd>
+        <dt>อีเมล</dt>
+        <dd><a href="mailto:the29constructionandmanagement@gmail.com">the29constructionandmanagement@gmail.com</a></dd>
+        <dt>โทรศัพท์</dt>
+        <dd><a href="tel:+66942621543">+66 942 621 543</a></dd>
+        <dt>Line</dt>
+        <dd><a href="https://line.me/ti/p/~naritnin" target="_blank" rel="noopener">naritnin</a></dd>
+      </dl>
+    </section>
+  </div>
+
   <section class="fb" id="fb" aria-labelledby="fbh">
     <div>
       <h2 id="fbh">เสนอแนะหรือแจ้งข้อมูลผิด</h2>
@@ -521,7 +549,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
   var LABEL = {}; CATS.forEach(function (c) { LABEL[c.key] = c.label; });
   var ORDER = { enacted: 0, draft: 1, council: 2, news: 3, price: 4 };
   var state = { items: [], rounds: [], refs: [], prices: {}, loaded: { items: false, rounds: false }, error: null, cat: "all", q: "", sort: "round", open: {}, view: "news", range: "5y", region: "ส่วนกลาง" };
-  var VIEWS = ["news", "refs", "prices", "materials"];
+  var VIEWS = ["news", "refs", "prices", "materials", "contact"];
   function setView() {
     var h = (location.hash || "").replace("#", "");
     var parts = h.split("/"); h = parts[0];
