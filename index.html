@@ -84,6 +84,7 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 .mark { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; text-decoration: none; flex: none; }
 .mark .sq { width: 24px; height: 24px; border-radius: 6px; background: hsl(var(--brand)); color: #fff; display: grid; place-items: center; }
 .mark .sq svg.i { width: 14px; height: 14px; stroke-width: 2.2; }
+.mark .logo { display: block; height: 40px; width: auto; border-radius: 6px; }
 
 .tabs { display: flex; align-items: center; gap: 4px; height: 100%; overflow-x: auto; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
@@ -392,7 +393,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
 
 <header class="site">
   <div class="wrap bar">
-    <a class="mark" href="#news"><span class="sq"><svg class="i"><use href="#i-scale"/></svg></span>The 29</a>
+    <a class="mark" href="#news"><img class="logo" src="logo.png" alt="The 29 Construction and Management Co.,Ltd."></a>
     <nav class="tabs" id="tabs" aria-label="ส่วนของหน้า">
       <a href="#news" data-view="news">ข่าวกฎหมาย</a>
       <a href="#refs" data-view="refs">เกณฑ์อ้างอิง</a>
