@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The 29 · อัปเดตกฎหมายและราคาก่อสร้าง</title>
+<link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -117,6 +118,8 @@ h1 .nw + br { display: none; }
 h1 .soft { color: hsl(var(--muted-foreground)); }
 .lede { margin: 12px 0 0; max-width: 60ch; color: hsl(var(--muted-foreground)); font-size: 15px; line-height: 1.7; text-wrap: pretty; }
 .hero-tools { display: grid; gap: 8px; }
+.hero-main { display: flex; align-items: center; gap: 32px; }
+.hero-logo { width: 150px; height: auto; flex: none; border-radius: 12px; }
 .stats { font-size: 13px; color: hsl(var(--muted-foreground)); font-family: var(--sans); }
 .search { position: relative; width: 100%; }
 .search svg.i { position: absolute; left: 12px; top: 12px; color: hsl(var(--faint)); }
@@ -360,6 +363,8 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
   .tabs a[aria-current="page"]::after { left: 8px; right: 8px; }
   .tabs a[aria-current="page"]::after { bottom: -8px; }
   .hero { padding: 32px 0 24px; }
+  .hero-main { gap: 18px; }
+  .hero-logo { width: 96px; }
   h1 { font-size: 30px; }
   h1 .nw + br { display: inline; }
   .list { grid-template-columns: 1fr; }
@@ -411,9 +416,12 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
 
 <div class="wrap">
   <section class="hero">
-    <div>
-      <h1><span class="nw">อัปเดตกฎหมาย</span><br> <span class="nw soft">และราคาก่อสร้าง</span></h1>
-      <p class="lede">สรุปกฎหมายควบคุมอาคารใหม่ทุกจันทร์และศุกร์ ตารางค่ากำหนดที่ใช้บ่อย ดัชนีราคา และราคาวัสดุจาก สนค. กับร้านวัสดุ 5 ร้าน ทุกรายการมีลิงก์ไปต้นฉบับ</p>
+    <div class="hero-main">
+      <img class="hero-logo" src="logo.png" alt="The 29 Construction and Management Co.,Ltd.">
+      <div>
+        <h1><span class="nw">อัปเดตกฎหมาย</span><br> <span class="nw soft">และราคาก่อสร้าง</span></h1>
+        <p class="lede">สรุปกฎหมายควบคุมอาคารใหม่ทุกจันทร์และศุกร์ ตารางค่ากำหนดที่ใช้บ่อย ดัชนีราคา และราคาวัสดุจาก สนค. กับร้านวัสดุ 5 ร้าน ทุกรายการมีลิงก์ไปต้นฉบับ</p>
+      </div>
     </div>
     <div class="hero-tools">
       <div class="search">
