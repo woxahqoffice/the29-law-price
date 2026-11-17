@@ -86,9 +86,9 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 .mark .sq { width: 24px; height: 24px; border-radius: 6px; background: hsl(var(--brand)); color: #fff; display: grid; place-items: center; }
 .mark .sq svg.i { width: 14px; height: 14px; stroke-width: 2.2; }
 .mark .logo { display: block; height: 48px; width: auto; }
-.logo-dark { display: none; }
-.dark .logo-light { display: none; }
-.dark .logo-dark { display: block; }
+.logo-dark, .mark .logo-dark { display: none; }
+.dark .logo-light, .dark .mark .logo-light { display: none; }
+.dark .logo-dark, .dark .mark .logo-dark { display: block; }
 
 .tabs { display: flex; align-items: center; gap: 4px; height: 100%; overflow-x: auto; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
