@@ -86,7 +86,9 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 .mark .sq { width: 24px; height: 24px; border-radius: 6px; background: hsl(var(--brand)); color: #fff; display: grid; place-items: center; }
 .mark .sq svg.i { width: 14px; height: 14px; stroke-width: 2.2; }
 .mark .logo { display: block; height: 48px; width: auto; }
-.dark .logo, .dark .hero-logo { filter: invert(1); }
+.logo-dark { display: none; }
+.dark .logo-light { display: none; }
+.dark .logo-dark { display: block; }
 
 .tabs { display: flex; align-items: center; gap: 4px; height: 100%; overflow-x: auto; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
@@ -430,7 +432,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
 
 <header class="site">
   <div class="wrap bar">
-    <a class="mark" href="#news"><img class="logo" src="logo.png" alt="The 29 Construction and Management Co.,Ltd."></a>
+    <a class="mark" href="#news"><img class="logo logo-light" src="logo.png" alt="The 29 Construction and Management Co.,Ltd."><img class="logo logo-dark" src="logo-dark.png" alt="" aria-hidden="true"></a>
     <nav class="tabs" id="tabs" aria-label="ส่วนของหน้า">
       <a href="#news" data-view="news">ข่าวกฎหมาย</a>
       <a href="#refs" data-view="refs">เกณฑ์อ้างอิง</a>
@@ -450,7 +452,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
 <div class="wrap">
   <section class="hero">
     <div class="hero-main">
-      <img class="hero-logo" src="logo.png" alt="The 29 Construction and Management Co.,Ltd.">
+      <img class="hero-logo logo-light" src="logo.png" alt="The 29 Construction and Management Co.,Ltd."><img class="hero-logo logo-dark" src="logo-dark.png" alt="" aria-hidden="true">
       <div>
         <h1><span class="nw">อัปเดตกฎหมาย</span><br> <span class="nw soft">และราคาก่อสร้าง</span></h1>
         <p class="lede">สรุปกฎหมายควบคุมอาคารใหม่ทุกจันทร์และศุกร์ ตารางค่ากำหนดที่ใช้บ่อย ดัชนีราคา และราคาวัสดุจาก สนค. กับร้านวัสดุ 5 ร้าน ทุกรายการมีลิงก์ไปต้นฉบับ</p>
