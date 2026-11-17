@@ -545,12 +545,16 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     return [it.title, it.agency, it.summary, it.impact, it.source_name].map(str).join(" ").toLowerCase().indexOf(state.q) !== -1;
   }
 
+  /* A special (manual) round that found nothing is not shown on the page */
+  function hiddenRound(r) { return !!r && str(r.note).indexOf("รอบพิเศษ") === 0 && !(Number(r.count) > 0); }
+  function shownRounds() { return state.rounds.filter(function (r) { return !hiddenRound(r); }); }
+
   /* header bits */
   function renderTop() {
-    var latest = state.rounds.map(function (r) { return r.id; }).sort().pop();
+    var latest = shownRounds().map(function (r) { return r.id; }).sort().pop();
     $("lastUpdate").textContent = latest && parseDay(latest) ? "อัปเดตล่าสุด " + th(latest, true) : "อัปเดตทุกจันทร์และศุกร์";
     var srcs = {}; state.items.forEach(function (i) { var u = safeUrl(i.url); if (u) srcs[u.hostname] = 1; });
-    $("stats").textContent = state.loaded.items ? state.items.length + " รายการ · " + state.rounds.length + " รอบ · " + Object.keys(srcs).length + " แหล่งที่มา" : "กำลังโหลด…";
+    $("stats").textContent = state.loaded.items ? state.items.length + " รายการ · " + shownRounds().length + " รอบ · " + Object.keys(srcs).length + " แหล่งที่มา" : "กำลังโหลด…";
   }
   function renderDue() {
     var list = state.items.filter(function (it) { var d = daysUntil(it.deadline); return d != null && d >= 0 && d <= 14; })
@@ -649,7 +653,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
 
     var roundMap = {}; state.rounds.forEach(function (r) { roundMap[r.id] = r; });
     var groups = {}; matched.forEach(function (it) { var g = str(it.round) || "ไม่ระบุรอบ"; (groups[g] = groups[g] || []).push(it); });
-    var keys = Object.keys(groups); if (!filtering) state.rounds.forEach(function (r) { if (keys.indexOf(r.id) === -1) keys.push(r.id); });
+    var keys = Object.keys(groups); if (!filtering) shownRounds().forEach(function (r) { if (keys.indexOf(r.id) === -1) keys.push(r.id); });
     keys.sort(function (a, b) { return b.localeCompare(a); });
     keys.forEach(function (g) {
       var r = roundMap[g]; var its = groups[g] || [];
