@@ -1358,7 +1358,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     if (state.hist) renderHist(sec);
     renderDbSearch(sec);
     var HL = d.labels || ["เดือนก่อน", "3 เดือนก่อน", "6 เดือนก่อน", "1 ปีก่อน"];
-    var QM = state.region === "ส่วนกลาง" && Array.isArray(d.qm) ? d.qm : null;
+    var QM = (state.region === "ส่วนกลาง" || state.liveQ) && Array.isArray(d.qm) ? d.qm : null;
     var nc = 3 + HL.length + (QM ? 2 : 0);
     var w = el("div", "tblwrap"); var t = el("table", "rt mcomp"); var tb = el("tbody"), shown = 0, gidx = 0, idxOf = new Map();
     d.cats.forEach(function (c) { c.items.forEach(function (x) { idxOf.set(x, gidx++); }); });
@@ -1602,18 +1602,23 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
       arr.forEach(function (r) { byIdx[r[0]] = r; });
       rg[1].forEach(function (c) { c.items.forEach(function (x) { var r = byIdx[i++]; if (!r) return; x.code = r[1]; if (fresh) { if (x.p !== r[2]) changed++; x.p = typeof r[2] === "number" ? r[2] : null; x.h = [r[3], r[4], r[5], r[6]]; } }); });
     });
-    if (Array.isArray(L.qm) && L.q && L.latest && L.latest["10"] === L.ym && Array.isArray(d.qm)) {
-      var oldQm = d.qm.slice(), nq = L.qm.map(ymIso), k = 0;
-      (d.cats || []).forEach(function (c) { c.items.forEach(function (x) {
-        var dbq = L.q[String(k++)], oq = Array.isArray(x.q) ? x.q : [];
-        if (!Array.isArray(dbq)) return;
-        x.q = nq.map(function (m, j) {
-          if (typeof dbq[j] === "number") return dbq[j];
-          for (var o = oldQm.length - 1; o >= 0; o--) if (oldQm[o] <= m) return typeof oq[o] === "number" ? oq[o] : null;
-          return null;
-        });
-      }); });
-      d.qm = nq;
+    if (Array.isArray(L.qm) && L.qt && L.latest && L.latest["10"] === L.ym) {
+      var oldQm = Array.isArray(d.qm) ? d.qm.slice() : [], nq = L.qm.map(ymIso);
+      regs.forEach(function (rg) {
+        var t = TPSO_TYPE[rg[0]], qt = t && L.qt[String(t)], k = 0;
+        if (!qt) return;
+        rg[1].forEach(function (c) { c.items.forEach(function (x) {
+          var dbq = qt[String(k++)], oq = Array.isArray(x.q) ? x.q : [];
+          if (!Array.isArray(dbq)) return;
+          x.q = nq.map(function (m, j) {
+            if (typeof dbq[j] === "number") return dbq[j];
+            if (rg[0] !== "ส่วนกลาง") return null;
+            for (var o = oldQm.length - 1; o >= 0; o--) if (oldQm[o] <= m) return typeof oq[o] === "number" ? oq[o] : null;
+            return null;
+          });
+        }); });
+      });
+      d.qm = nq; state.liveQ = true;
     }
     var iso = ymIso(L.ym);
     if (iso !== d.month) { d.month = iso; d.months = (L.months || []).map(ymIso); }
