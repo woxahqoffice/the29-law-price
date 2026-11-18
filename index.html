@@ -1724,7 +1724,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
   function renderK() {
     var box = $("kcalc"); state.k = state.k || { f: "1", rows: [{ ym: null, amt: "" }] };
     var k = state.k;
-    if (!k.map) { box.textContent = ""; box.appendChild(stateBox(k.err ? "โหลดดัชนีค่า K ไม่สำเร็จ ลองเปิดหน้านี้ใหม่" : "กำลังโหลดดัชนีค่า K…")); if (!k.err) kLoad(); return; }
+    if (!k.map) { box.textContent = ""; box.appendChild(stateBox(k.err ? "โหลดดัชนีค่า K ไม่สำเร็จ ลองเปิดหน้านี้ใหม่" : "กำลังโหลดดัชนีค่า K…")); if (!k.err) setTimeout(kLoad, 0); return; }
     if (k.built) return;
     k.built = true; box.textContent = "";
     var sec = el("section", "psec"), hd = el("div", "chhead");
