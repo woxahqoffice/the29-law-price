@@ -178,6 +178,19 @@ h1 .soft { color: hsl(var(--muted-foreground)); }
 .histbox .hstats b { color: hsl(var(--foreground)); font-weight: 600; }
 .histbox .hpills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 @media (max-width: 640px) { .histbox .hchart text { font-size: 20px; } }
+.kform { display: flex; flex-wrap: wrap; gap: 12px 16px; margin: 14px 0 6px; }
+.kfield { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: hsl(var(--muted-foreground)); }
+.kfsel { max-width: min(560px, 86vw); }
+.kformula { font-family: var(--mono); font-size: 13px; margin: 8px 0 14px; padding: 8px 10px; border-radius: 8px; background: hsl(var(--muted)); overflow-x: auto; white-space: nowrap; }
+.kh3 { font-size: 15px; margin: 18px 0 8px; }
+.krows { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+.krow { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 14px; padding-bottom: 10px; border-bottom: 1px solid hsl(var(--border)); }
+.kno { font-weight: 600; font-size: 14px; min-width: 52px; padding-bottom: 8px; }
+.kamt { width: 170px; }
+.kres { margin-top: 14px; }
+.ktable tr.ktotal td { font-weight: 600; border-top: 2px solid hsl(var(--border)); }
+.knote { margin-top: 16px; font-size: 13px; color: hsl(var(--muted-foreground)); line-height: 1.7; }
+.knote p { margin: 0 0 6px; }
 .aprow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 12px 0; }
 .aplab { font-size: 14px; margin-right: 6px; }
 .apsel { font: inherit; font-size: 14px; height: 34px; padding: 0 10px; border-radius: 8px; border: 1px solid hsl(var(--border)); background: hsl(var(--card)); color: hsl(var(--foreground)); }
@@ -490,6 +503,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
       <a href="#refs" data-view="refs">เกณฑ์อ้างอิง</a>
       <a href="#laws" data-view="laws">ตัวบทและการแก้ไข</a>
       <a href="#prices" data-view="prices">ดัชนีราคา</a>
+      <a href="#k" data-view="k">ค่า K</a>
       <a href="#materials" data-view="materials">ราคาวัสดุ</a>
       <a href="#contact" data-view="contact">ติดต่อเรา</a>
     </nav>
@@ -556,6 +570,10 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
 
   <div id="view-prices" hidden>
     <div id="prices"></div>
+  </div>
+
+  <div id="view-k" hidden>
+    <div id="kcalc"></div>
   </div>
 
   <div id="view-contact" hidden>
@@ -643,7 +661,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
   var LABEL = {}; CATS.forEach(function (c) { LABEL[c.key] = c.label; });
   var ORDER = { enacted: 0, draft: 1, council: 2, news: 3, price: 4 };
   var state = { items: [], rounds: [], refs: [], laws: [], prices: {}, loaded: { items: false, rounds: false }, error: null, cat: "all", q: "", sort: "round", open: {}, view: "news", range: "5y", region: "ส่วนกลาง" };
-  var VIEWS = ["news", "refs", "laws", "prices", "materials", "contact"];
+  var VIEWS = ["news", "refs", "laws", "prices", "k", "materials", "contact"];
   function setView() {
     var h = (location.hash || "").replace("#", "");
     var parts = h.split("/"); h = parts[0];
@@ -652,7 +670,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     state.view = VIEWS.indexOf(h) >= 0 ? h : "news";
     VIEWS.forEach(function (v) { $("view-" + v).hidden = v !== state.view; });
     [].forEach.call(document.querySelectorAll("#tabs a"), function (a) { if (a.dataset.view === state.view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
-    $("q").placeholder = state.view === "laws" ? "ค้นทั้งเว็บ เช่น ลิฟต์, ฉบับที่ 33, ระยะร่น, SD40" : state.view === "refs" ? "ค้นหาค่ากำหนด เช่น ระยะร่น, ทางลาด, ป้าย, ที่จอดรถ" : state.view === "prices" ? "ค้นหาประกาศด้านราคา เช่น ค่า K, ดัชนี" : state.view === "materials" ? "ค้นหาวัสดุ เช่น SD40, H-Beam, ท่อ PVC, THW" : "ค้นหาชื่อกฎหมาย หน่วยงาน หรือคำ เช่น ผังเมือง, มอก.";
+    $("q").placeholder = state.view === "laws" ? "ค้นทั้งเว็บ เช่น ลิฟต์, ฉบับที่ 33, ระยะร่น, SD40" : state.view === "refs" ? "ค้นหาค่ากำหนด เช่น ระยะร่น, ทางลาด, ป้าย, ที่จอดรถ" : state.view === "prices" ? "ค้นหาประกาศด้านราคา เช่น ค่า K, ดัชนี" : state.view === "k" ? "ค้นทั้งเว็บ (หน้านี้ไม่ใช้ช่องค้นหา)" : state.view === "materials" ? "ค้นหาวัสดุ เช่น SD40, H-Beam, ท่อ PVC, THW" : "ค้นหาชื่อกฎหมาย หน่วยงาน หรือคำ เช่น ผังเมือง, มอก.";
     renderAll();
     if (state.view === "refs" || state.view === "laws") { var t = $("tabs"); if (t && t.getBoundingClientRect().top < 0) t.scrollIntoView(); }
   }
@@ -1662,12 +1680,149 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
 
   }
 
+  var KF = [["1","หมวดที่ 1 งานอาคาร","งานอาคาร",0.25,{"I":0.15,"C":0.1,"M":0.4,"S":0.1}],["2.1","หมวดที่ 2 งานดิน","งานดิน",0.3,{"I":0.1,"E":0.4,"F":0.2}],["2.2","หมวดที่ 2 งานดิน","งานหินเรียง",0.4,{"I":0.2,"M":0.2,"F":0.2}],["2.3","หมวดที่ 2 งานดิน","งานเจาะระเบิดหิน",0.45,{"I":0.15,"M":0.1,"E":0.2,"F":0.1}],["3.1","หมวดที่ 3 งานทาง","งานผิวทาง PRIME COAT, TACK COAT, SEAL COAT",0.3,{"A":0.4,"E":0.2,"F":0.1}],["3.2","หมวดที่ 3 งานทาง","งานผิวทาง SURFACE TREATMENT, SLURRY SEAL",0.3,{"M":0.1,"A":0.3,"E":0.2,"F":0.1}],["3.3","หมวดที่ 3 งานทาง","งานผิวทาง ASPHALTIC CONCRETE, PENETRATION MACADAM",0.3,{"M":0.1,"A":0.4,"E":0.1,"F":0.1}],["3.4","หมวดที่ 3 งานทาง","งานผิวถนนคอนกรีตเสริมเหล็ก",0.3,{"I":0.1,"C":0.35,"M":0.1,"S":0.15}],["3.5","หมวดที่ 3 งานทาง","งานท่อระบายน้ำคอนกรีตเสริมเหล็กและงานบ่อพัก",0.35,{"I":0.2,"C":0.15,"M":0.15,"S":0.15}],["3.6","หมวดที่ 3 งานทาง","งานโครงสร้างคอนกรีตเสริมเหล็กและงานเขื่อนกันตลิ่ง",0.3,{"I":0.1,"C":0.15,"M":0.2,"S":0.25}],["3.7","หมวดที่ 3 งานทาง","งานโครงสร้างเหล็ก",0.25,{"I":0.1,"C":0.05,"M":0.2,"S":0.4}],["4.1","หมวดที่ 4 งานชลประทาน","งานอาคารชลประทานไม่รวมบานเหล็ก",0.4,{"I":0.2,"C":0.1,"M":0.1,"S":0.2}],["4.2","หมวดที่ 4 งานชลประทาน","งานอาคารชลประทานรวมบานเหล็ก",0.35,{"I":0.2,"C":0.1,"M":0.1,"S":0.25}],["4.3","หมวดที่ 4 งานชลประทาน","งานบานระบาย TRASHRACK และ STEEL LINER",0.35,{"I":0.2,"G":0.45}],["4.4","หมวดที่ 4 งานชลประทาน","งานเหล็กเสริมคอนกรีต และ ANCHOR BAR",0.25,{"I":0.15,"S":0.6}],["4.5","หมวดที่ 4 งานชลประทาน","งานคอนกรีตไม่รวมเหล็กและคอนกรีตดาดคลอง",0.4,{"I":0.15,"C":0.25,"M":0.2}],["4.6","หมวดที่ 4 งานชลประทาน","งานเจาะ",0.4,{"I":0.2,"M":0.1,"E":0.2,"F":0.1}],["4.7","หมวดที่ 4 งานชลประทาน","งานอัดฉีดน้ำปูน",0.0,{"C":1.0}],["5.1.1","หมวดที่ 5 งานระบบสาธารณูปโภค","วางท่อ AC/PVC — ผู้ว่าจ้างจัดหาท่อ/อุปกรณ์",0.5,{"I":0.25,"M":0.25}],["5.1.2","หมวดที่ 5 งานระบบสาธารณูปโภค","วางท่อ AC/PVC — ผู้รับจ้างจัดหาท่อ AC",0.4,{"I":0.1,"M":0.1,"AC":0.4}],["5.1.3","หมวดที่ 5 งานระบบสาธารณูปโภค","วางท่อ AC/PVC — ผู้รับจ้างจัดหาท่อ PVC",0.4,{"I":0.1,"M":0.1,"PVC":0.4}],["5.2.1","หมวดที่ 5 งานระบบสาธารณูปโภค","วางท่อเหล็กเหนียว/HDPE — ผู้ว่าจ้างจัดหาท่อ/อุปกรณ์",0.4,{"I":0.1,"M":0.15,"E":0.2,"F":0.15}],["5.2.2","หมวดที่ 5 งานระบบสาธารณูปโภค","วางท่อเหล็กเหนียว — ผู้รับจ้างจัดหาท่อเหล็กเหนียว (รวม TRANSMISSION CONDUIT)",0.4,{"I":0.1,"M":0.1,"E":0.1,"GIP":0.3}],["5.2.3","หมวดที่ 5 งานระบบสาธารณูปโภค","วางท่อ HDPE — ผู้รับจ้างจัดหาท่อ HDPE",0.5,{"I":0.1,"M":0.1,"PE":0.3}],["5.3","หมวดที่ 5 งานระบบสาธารณูปโภค","ปรับปรุงอุโมงค์ส่งน้ำและงาน SECONDARY LINING",0.4,{"I":0.1,"E":0.15,"GIP":0.35}],["5.4","หมวดที่ 5 งานระบบสาธารณูปโภค","วางท่อ PVC หุ้มด้วยคอนกรีต",0.3,{"I":0.1,"C":0.2,"M":0.05,"S":0.05,"PVC":0.3}],["5.5","หมวดที่ 5 งานระบบสาธารณูปโภค","วางท่อ PVC กลบทราย",0.25,{"I":0.05,"M":0.05,"PVC":0.65}],["5.6","หมวดที่ 5 งานระบบสาธารณูปโภค","วางท่อเหล็กอาบสังกะสี",0.25,{"I":0.25,"GIP":0.5}],["5.7.1","หมวดที่ 5 งานระบบสาธารณูปโภค","สายส่งแรงสูง/สถานีย่อย — ติดตั้งเสา โครงเหล็ก อุปกรณ์ (กฟผ.)",0.6,{"I":0.25,"F":0.15}],["5.7.2","หมวดที่ 5 งานระบบสาธารณูปโภค","สายส่งแรงสูง — ฐานรากเสา TOWER FOUNDATION, BOUNDARY POST (กฟผ.)",0.35,{"I":0.2,"C":0.2,"S":0.1,"F":0.15}],["5.7.3","หมวดที่ 5 งานระบบสาธารณูปโภค","สถานีไฟฟ้าย่อย — ฐานรากอุปกรณ์ (กฟผ.)",0.5,{"I":0.2,"C":0.15,"S":0.15}],["5.8.1","หมวดที่ 5 งานระบบสาธารณูปโภค","เสาเข็มคอนกรีตอัดแรง (กฟผ.)",0.35,{"I":0.15,"C":0.2,"S":0.3}],["5.8.2","หมวดที่ 5 งานระบบสาธารณูปโภค","เสาเข็ม CAST IN PLACE (กฟผ.)",0.3,{"I":0.1,"C":0.25,"S":0.35}],["5.9.1","หมวดที่ 5 งานระบบสาธารณูปโภค","สายส่ง 69–115 kV — ผู้ว่าจ้างจัดหาวัสดุ (กฟภ.)",0.8,{"I":0.05,"M":0.1,"F":0.05}],["5.9.2","หมวดที่ 5 งานระบบสาธารณูปโภค","สายส่ง 69–115 kV — ผู้รับจ้างจัดหาวัสดุ (กฟภ.)",0.45,{"I":0.05,"M":0.2,"F":0.05,"W":0.25}]];
+  var KNAME = { I: "ดัชนีราคาผู้บริโภคของประเทศ", C: "ซีเมนต์", M: "วัสดุก่อสร้าง (ไม่รวมเหล็กและซีเมนต์)", S: "เหล็ก", G: "เหล็กแผ่นเรียบ", E: "เครื่องจักรกลและบริภัณฑ์", F: "น้ำมันดีเซลหมุนเร็ว", A: "แอสฟัลท์", AC: "ท่อซีเมนต์ใยหิน", PVC: "ท่อ PVC", GIP: "ท่อเหล็กอาบสังกะสี", PE: "ท่อ HDPE (Hydensity Polyethylene)", W: "สายไฟฟ้า" };
+  var KORDER = ["I", "C", "M", "S", "G", "E", "F", "A", "AC", "PVC", "GIP", "PE", "W"];
+  function tr3(x) { return Math.floor(x * 1000 + 1e-7) / 1000; }
+  function f3(x) { return x.toFixed(3); }
+  function bahtFmt(x) { return x.toLocaleString("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function kFormulaText(f) { var t = "K = " + (f[3] ? f[3].toFixed(2) : ""); Object.keys(f[4]).forEach(function (c, i) { t += (f[3] || i ? " + " : "") + f[4][c].toFixed(2) + " " + c + "t/" + c + "o"; }); return t; }
+  function kLoad() {
+    var k = state.k; if (k.loading || k.map) return;
+    k.loading = true;
+    fetch(SB + "/rest/v1/rpc/k_all", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: "{}" })
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (d) {
+        var map = {}, months = {};
+        Object.keys(d || {}).forEach(function (c) { map[c] = {}; d[c].forEach(function (p) { map[c][p[0]] = Number(p[1]); if (c === "I") months[p[0]] = 1; }); });
+        k.months = Object.keys(months).map(Number).sort(function (a, b) { return b - a; });
+        if (!k.months.length) throw 0;
+        k.map = map;
+        var lt = k.months[0];
+        if (!k.o) k.o = ymAdd(lt, -12);
+        k.rows.forEach(function (r) { if (!r.ym) r.ym = lt; });
+        k.loading = false; k.built = false; if (state.view === "k") renderK();
+      })
+      .catch(function () { k.loading = false; k.err = true; if (state.view === "k") renderK(); });
+  }
+  function kCalc(f, o, t) {
+    var map = state.k.map, terms = [], K = f[3], miss = [];
+    Object.keys(f[4]).forEach(function (c) {
+      var io = map[c] && map[c][o], it = map[c] && map[c][t];
+      if (!(io > 0) || !(it > 0)) { miss.push(c); return; }
+      var ratio = tr3(it / io), v = tr3(f[4][c] * ratio);
+      terms.push({ c: c, io: io, it: it, ratio: ratio, w: f[4][c], v: v }); K += v;
+    });
+    return miss.length ? { miss: miss } : { K: Math.round(K * 1000) / 1000, terms: terms };
+  }
+  function kMonthSelect(val, onch) {
+    var sel = document.createElement("select"); sel.className = "apsel";
+    state.k.months.forEach(function (m) { var o = document.createElement("option"); o.value = m; o.textContent = ymLabel(m); if (m === val) o.selected = true; sel.appendChild(o); });
+    sel.addEventListener("change", function () { onch(Number(sel.value)); });
+    return sel;
+  }
+  function renderK() {
+    var box = $("kcalc"); state.k = state.k || { f: "1", rows: [{ ym: null, amt: "" }] };
+    var k = state.k;
+    if (!k.map) { box.textContent = ""; box.appendChild(stateBox(k.err ? "โหลดดัชนีค่า K ไม่สำเร็จ ลองเปิดหน้านี้ใหม่" : "กำลังโหลดดัชนีค่า K…")); if (!k.err) kLoad(); return; }
+    if (k.built) return;
+    k.built = true; box.textContent = "";
+    var sec = el("section", "psec"), hd = el("div", "chhead");
+    hd.appendChild(el("h2", null, "คำนวณค่า K สัญญาแบบปรับราคาได้")); sec.appendChild(hd);
+    sec.appendChild(el("div", "sub", "สูตร 35 ประเภทงานตามหนังสือสำนักเลขาธิการคณะรัฐมนตรี ที่ นร 0203/ว 109 ลงวันที่ 24 ส.ค. 2532 · ดัชนี สนค. ฐานปี 2530 ดึงจาก index-api.tpso.go.th อัปเดตเองทุกเดือน · มีข้อมูล " + ymLabel(k.months[k.months.length - 1]) + " – " + ymLabel(k.months[0])));
+    var form = el("div", "kform");
+    var l1 = el("label", "kfield"); l1.appendChild(el("span", null, "ประเภทงาน (สูตร)"));
+    var fs = document.createElement("select"); fs.className = "apsel kfsel"; var og = null, lastG = null;
+    KF.forEach(function (f) { if (f[1] !== lastG) { og = document.createElement("optgroup"); og.label = f[1]; fs.appendChild(og); lastG = f[1]; } var o = document.createElement("option"); o.value = f[0]; o.textContent = f[0] + " " + f[2]; if (f[0] === k.f) o.selected = true; og.appendChild(o); });
+    fs.addEventListener("change", function () { k.f = fs.value; kCompute(); });
+    l1.appendChild(fs); form.appendChild(l1);
+    var l2 = el("label", "kfield"); l2.appendChild(el("span", null, "เดือนที่เปิดซองประกวดราคา (o)"));
+    l2.appendChild(kMonthSelect(k.o, function (v) { k.o = v; kCompute(); })); form.appendChild(l2);
+    sec.appendChild(form);
+    var ft = el("p", "kformula"); ft.id = "kformula"; sec.appendChild(ft);
+    sec.appendChild(el("h3", "kh3", "งวดงาน"));
+    var rowsBox = el("div", "krows"); rowsBox.id = "krows"; sec.appendChild(rowsBox);
+    var add = el("button", "pill", "+ เพิ่มงวด"); add.type = "button";
+    add.addEventListener("click", function () { var last = k.rows[k.rows.length - 1], ym = last && last.ym ? ymAdd(last.ym, 1) : k.months[0]; if (ym > k.months[0]) ym = k.months[0]; k.rows.push({ ym: ym, amt: "" }); kRows(); kCompute(); });
+    sec.appendChild(add);
+    var res = el("div", "kres"); res.id = "kres"; sec.appendChild(res);
+    var note = el("div", "knote");
+    note.appendChild(el("p", null, "วิธีคิด: อัตราส่วนดัชนี (t/o) และผลคูณกับสัดส่วนแต่ละตัว ใช้ทศนิยม 3 ตำแหน่งโดยตัดทิ้ง ไม่ปัดเศษ แล้วจึงรวมเป็นค่า K"));
+    note.appendChild(el("p", null, "เงินเพิ่ม/ลด: ถ้า K เกิน 1.04 จ่ายเพิ่ม = ค่างาน × (K − 1.04) · ถ้า K ต่ำกว่า 0.96 เรียกคืน = ค่างาน × (0.96 − K) · ระหว่าง 0.96–1.04 ไม่ปรับ"));
+    note.appendChild(el("p", null, "ส่งงานล่าช้าเพราะผู้รับจ้าง ให้ใช้ K ของเดือนสุดท้ายตามสัญญาหรือเดือนที่ส่งงานจริง แล้วแต่ค่าใดต่ำกว่า · ใช้ได้เฉพาะสัญญาที่ระบุว่าเป็นสัญญาแบบปรับราคาได้ — เครื่องมือนี้ช่วยคำนวณเบื้องต้น ต้องยึดเงื่อนไขในสัญญาและหนังสือเวียนฉบับล่าสุด"));
+    sec.appendChild(note);
+    box.appendChild(sec);
+    var s2 = el("section", "psec"), h2 = el("div", "chhead"); h2.appendChild(el("h2", null, "ดัชนีราคาที่ใช้คำนวณค่า K ล่าสุด")); s2.appendChild(h2);
+    var lt = k.months[0], pm = ymAdd(lt, -1), py = ymAdd(lt, -12);
+    s2.appendChild(el("div", "sub", "เดือน " + ymLabel(lt) + " · ฐานปี 2530 = 100 · เทียบกับ " + ymLabel(pm) + " และ " + ymLabel(py)));
+    var w = el("div", "tblwrap"), tb = el("table", "rt mcomp"), th = el("thead"), hr = el("tr");
+    ["ตัวแปร", "ดัชนีราคา", "ล่าสุด", "เดือนก่อน", "1 ปีก่อน"].forEach(function (h, i) { hr.appendChild(el("th", i > 1 ? "num" : null, h)); }); th.appendChild(hr); tb.appendChild(th);
+    var bd = el("tbody");
+    KORDER.forEach(function (c) {
+      var m = k.map[c]; if (!m || !(m[lt] > 0)) return;
+      var tr = el("tr"); tr.appendChild(el("td", null, c)); tr.appendChild(el("td", null, KNAME[c] || c));
+      tr.appendChild(el("td", "num val", m[lt].toFixed(1)));
+      tr.appendChild(m[pm] > 0 ? chgCell(m[lt], m[pm], ymLabel(pm)) : el("td", "num", "—"));
+      tr.appendChild(m[py] > 0 ? chgCell(m[lt], m[py], ymLabel(py)) : el("td", "num", "—"));
+      bd.appendChild(tr);
+    });
+    tb.appendChild(bd); w.appendChild(tb); s2.appendChild(w);
+    box.appendChild(s2);
+    kRows(); kCompute();
+  }
+  function kRows() {
+    var k = state.k, box = $("krows"); if (!box) return; box.textContent = "";
+    k.rows.forEach(function (r, i) {
+      var row = el("div", "krow");
+      row.appendChild(el("span", "kno", "งวด " + (i + 1)));
+      var l = el("label", "kfield"); l.appendChild(el("span", null, "เดือนส่งงาน (t)")); l.appendChild(kMonthSelect(r.ym, function (v) { r.ym = v; kCompute(); })); row.appendChild(l);
+      var l2 = el("label", "kfield"); l2.appendChild(el("span", null, "ค่างานงวดนี้ (บาท)"));
+      var inp = document.createElement("input"); inp.className = "apsel kamt"; inp.inputMode = "decimal"; inp.placeholder = "เช่น 1,250,000"; inp.value = r.amt;
+      inp.addEventListener("input", function () { r.amt = inp.value; kCompute(); }); l2.appendChild(inp); row.appendChild(l2);
+      if (k.rows.length > 1) { var x = el("button", "cmpbtn", "ลบ"); x.type = "button"; x.addEventListener("click", function () { k.rows.splice(i, 1); kRows(); kCompute(); }); row.appendChild(x); }
+      box.appendChild(row);
+    });
+  }
+  function kCompute() {
+    var k = state.k, f = KF.filter(function (x) { return x[0] === k.f; })[0] || KF[0];
+    var ft = $("kformula"); if (ft) ft.textContent = "สูตร " + f[0] + " " + f[2] + ":  " + kFormulaText(f);
+    var res = $("kres"); if (!res) return; res.textContent = "";
+    var tb = el("table", "rt mcomp ktable"), th = el("thead"), hr = el("tr");
+    ["งวด", "เดือนส่งงาน", "ค่า K", "เปลี่ยนแปลง", "ค่างาน (บาท)", "เงินเพิ่ม (+) / ลด (−)"].forEach(function (h, i) { hr.appendChild(el("th", i > 1 ? "num" : null, h)); }); th.appendChild(hr); tb.appendChild(th);
+    var bd = el("tbody"), sumAmt = 0, sumAdj = 0, first = null, firstNo = 0;
+    k.rows.forEach(function (r, i) {
+      var c = kCalc(f, k.o, r.ym), tr = el("tr");
+      tr.appendChild(el("td", null, String(i + 1))); tr.appendChild(el("td", null, ymLabel(r.ym)));
+      if (c.miss) { var td = el("td", "num", "ไม่มีดัชนี " + c.miss.join(", ") + " ของเดือนที่เลือก"); td.colSpan = 4; tr.appendChild(td); bd.appendChild(tr); return; }
+      if (!first) { first = { c: c, ym: r.ym }; firstNo = i + 1; }
+      var pct = (c.K - 1) * 100, amt = Number(String(r.amt).replace(/[,\s]/g, "")), adj = null;
+      tr.appendChild(el("td", "num val", f3(c.K)));
+      tr.appendChild(el("td", "num " + (c.K > 1.04 ? "up" : c.K < 0.96 ? "down" : ""), (pct > 0 ? "+" : "") + pct.toFixed(1) + "%" + (c.K > 1.04 || c.K < 0.96 ? "" : " (ไม่ปรับ)")));
+      if (amt > 0) { adj = c.K > 1.04 ? amt * (c.K - 1.04) : c.K < 0.96 ? -amt * (0.96 - c.K) : 0; adj = Math.round(adj * 100) / 100; sumAmt += amt; sumAdj += adj; }
+      tr.appendChild(el("td", "num", amt > 0 ? bahtFmt(amt) : "—"));
+      tr.appendChild(el("td", "num val " + (adj > 0 ? "up" : adj < 0 ? "down" : ""), adj == null ? "ใส่ค่างาน" : (adj > 0 ? "+" : "") + bahtFmt(adj)));
+      bd.appendChild(tr);
+    });
+    if (sumAmt > 0 && k.rows.length > 1) { var tt = el("tr", "ktotal"); tt.appendChild(el("td", null, "รวม")); tt.appendChild(el("td")); tt.appendChild(el("td")); tt.appendChild(el("td")); tt.appendChild(el("td", "num", bahtFmt(sumAmt))); tt.appendChild(el("td", "num val " + (sumAdj > 0 ? "up" : sumAdj < 0 ? "down" : ""), (sumAdj > 0 ? "+" : "") + bahtFmt(sumAdj))); bd.appendChild(tt); }
+    tb.appendChild(bd); var w = el("div", "tblwrap"); w.appendChild(tb); res.appendChild(w);
+    if (first) {
+      res.appendChild(el("h3", "kh3", "รายละเอียดการคำนวณ งวด " + firstNo + " (o = " + ymLabel(k.o) + ", t = " + ymLabel(first.ym) + ")"));
+      var t2 = el("table", "rt mcomp ktable"), h2 = el("thead"), r2 = el("tr");
+      ["ตัวแปร", "ดัชนี o", "ดัชนี t", "t/o", "สัดส่วน", "ผลคูณ"].forEach(function (h, i) { r2.appendChild(el("th", i ? "num" : null, h)); }); h2.appendChild(r2); t2.appendChild(h2);
+      var b2 = el("tbody");
+      if (f[3]) { var cr = el("tr"); cr.appendChild(el("td", null, "ค่าคงที่")); ["", "", "", "", f3(f[3])].forEach(function (v) { cr.appendChild(el("td", "num", v)); }); b2.appendChild(cr); }
+      first.c.terms.forEach(function (x) { var tr = el("tr"); tr.appendChild(el("td", null, x.c + " — " + (KNAME[x.c] || ""))); [x.io.toFixed(1), x.it.toFixed(1), f3(x.ratio), x.w.toFixed(2), f3(x.v)].forEach(function (v) { tr.appendChild(el("td", "num", v)); }); b2.appendChild(tr); });
+      var kr = el("tr", "ktotal"); kr.appendChild(el("td", null, "ค่า K")); ["", "", "", ""].forEach(function () { kr.appendChild(el("td")); }); kr.appendChild(el("td", "num val", f3(first.c.K))); b2.appendChild(kr);
+      t2.appendChild(b2); var w2 = el("div", "tblwrap"); w2.appendChild(t2); res.appendChild(w2);
+    }
+  }
   function renderAll() {
     renderTop();
     if (state.view === "news") { renderDue(); renderPills(); renderList(); }
     else if (state.view === "refs") renderRefs();
     else if (state.view === "laws") renderLaws();
     else if (state.view === "materials") renderMaterials();
+    else if (state.view === "k") renderK();
     else renderPrices();
   }
   $("q").addEventListener("input", function (e) { state.q = e.target.value.trim().toLowerCase(); renderAll(); });
