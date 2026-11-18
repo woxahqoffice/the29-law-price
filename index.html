@@ -168,6 +168,19 @@ h1 .soft { color: hsl(var(--muted-foreground)); }
 .cmpbox .bar { display: block; height: 6px; border-radius: 3px; background: hsl(var(--brand) / 0.55); min-width: 2px; }
 .cmpbox .barcell { width: 32%; }
 .cmpbox .low { color: hsl(142 60% 32%); }
+.histbox .hchart { width: 100%; height: auto; display: block; margin-top: 8px; }
+.histbox .hchart .hl { fill: none; stroke: hsl(var(--brand)); stroke-width: 2; }
+.histbox .hchart .ha { fill: hsl(var(--brand) / 0.08); }
+.histbox .hchart .gx { stroke: hsl(var(--border)); stroke-width: 1; }
+.histbox .hchart text { font-size: 11px; fill: hsl(var(--muted-foreground)); font-family: var(--sans); }
+.histbox .hchart .hd { fill: hsl(var(--brand)); }
+.histbox .hstats { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 8px; font-size: 13px; color: hsl(var(--muted-foreground)); }
+.histbox .hstats b { color: hsl(var(--foreground)); font-weight: 600; }
+.histbox .hpills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.dbsearch { margin: 20px 0 8px; }
+.dbsearch h3 { margin: 0 0 6px; font-size: 15px; font-weight: 600; }
+.dbsearch table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.dbsearch td { padding: 8px 6px; border-top: 1px solid hsl(var(--border)); vertical-align: top; }
 @media (max-width: 640px) { .cmpbox { padding: 12px; } .cmpbox .barcell, .cmpbox td:nth-child(3) { display: none; } .cmpbox td { padding: 6px 4px; } .cmpbox .cmpbtn { font-size: 12px; } }
 .sortrow { display: flex; align-items: center; gap: 8px; font-size: 13px; color: hsl(var(--muted-foreground)); }
 select, .sortrow select {
@@ -252,6 +265,28 @@ select:hover { border-color: hsl(var(--input)); }
 .ref .law a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .ref .checked { font-size: 12px; color: hsl(var(--faint)); }
 .ref .scope { margin: 8px 0 0; font-size: 13px; color: hsl(var(--muted-foreground)); max-width: 90ch; }
+.lawst { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: hsl(var(--ok) / 0.12); color: hsl(var(--ok)); white-space: nowrap; }
+.chain { list-style: none; margin: 20px 0 0; padding: 0; border-left: 2px solid hsl(var(--border)); }
+.chain li { position: relative; padding: 0 0 20px 20px; max-width: 90ch; }
+.chain li::before { content: ""; position: absolute; left: -6px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: hsl(var(--card)); border: 2px solid hsl(var(--brand)); }
+.chain li.gone::before { border-color: hsl(var(--faint)); }
+.chain li.gone .vt { color: hsl(var(--muted-foreground)); text-decoration: line-through; text-decoration-color: hsl(var(--faint)); }
+.chain .vl { font-weight: 600; font-size: 14px; }
+.chain .vr { font-size: 12px; margin-left: 8px; color: hsl(var(--muted-foreground)); }
+.chain .vt { margin: 2px 0 0; font-size: 14px; line-height: 1.55; }
+.chain .vg { margin: 4px 0 0; font-size: 13px; color: hsl(var(--muted-foreground)); }
+.chain .vn { margin: 4px 0 0; font-size: 13px; }
+.chain .vu { font-size: 12px; color: hsl(var(--wait)); }
+.chain a { color: hsl(var(--brand)); text-decoration: none; font-weight: 500; font-size: 13px; }
+.chain a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.rel { margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; color: hsl(var(--muted-foreground)); }
+.rel a { text-decoration: none; }
+.gs h3 { margin: 24px 0 8px; font-size: 15px; font-weight: 600; }
+.gs ul { list-style: none; margin: 0; padding: 0; }
+.gs li { border-bottom: 1px solid hsl(var(--border)); }
+.gs li a { display: block; padding: 10px 0; text-decoration: none; font-size: 14px; }
+.gs li a:hover .gt { color: hsl(var(--brand)); }
+.gs .gm { display: block; font-size: 12px; color: hsl(var(--muted-foreground)); margin-top: 2px; }
 .pending { margin: 12px 0 0; padding: 12px 16px; border-radius: var(--radius-sm); background: hsl(var(--wait) / 0.1); color: hsl(var(--wait)); font-size: 13px; max-width: 90ch; }
 
 .tblwrap { overflow-x: auto; margin-top: 16px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background: hsl(var(--card)); }
@@ -449,6 +484,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     <nav class="tabs" id="tabs" aria-label="ส่วนของหน้า">
       <a href="#news" data-view="news">ข่าวกฎหมาย</a>
       <a href="#refs" data-view="refs">เกณฑ์อ้างอิง</a>
+      <a href="#laws" data-view="laws">ตัวบทและการแก้ไข</a>
       <a href="#prices" data-view="prices">ดัชนีราคา</a>
       <a href="#materials" data-view="materials">ราคาวัสดุ</a>
       <a href="#contact" data-view="contact">ติดต่อเรา</a>
@@ -503,6 +539,11 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
   <div id="view-refs" hidden>
     <p class="viewnote" id="refsnote">เลือกหัวข้อเพื่อดูค่ากำหนดพร้อมเลขข้อ สรุปจากตัวบทฉบับรวม ก่อนยื่นแบบให้เปิดตัวบทต้นฉบับประกอบ และตรวจข้อบัญญัติท้องถิ่นที่อาจเข้มกว่า</p>
     <div id="refs"></div>
+  </div>
+
+  <div id="view-laws" hidden>
+    <p class="viewnote" id="lawsnote">กฎหมายที่เกณฑ์อ้างอิงใช้ เรียงฉบับเดิม ฉบับแก้ไข และฉบับที่ถูกยกเลิก พร้อมข้อมูลราชกิจจานุเบกษาและลิงก์ตัวบท พิมพ์ในช่องค้นหาเพื่อค้นทั้งเว็บ ทั้งตัวบท เกณฑ์ ข่าว และราคาวัสดุ</p>
+    <div id="laws"></div>
   </div>
 
   <div id="view-materials" hidden>
@@ -597,18 +638,19 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
   ];
   var LABEL = {}; CATS.forEach(function (c) { LABEL[c.key] = c.label; });
   var ORDER = { enacted: 0, draft: 1, council: 2, news: 3, price: 4 };
-  var state = { items: [], rounds: [], refs: [], prices: {}, loaded: { items: false, rounds: false }, error: null, cat: "all", q: "", sort: "round", open: {}, view: "news", range: "5y", region: "ส่วนกลาง" };
-  var VIEWS = ["news", "refs", "prices", "materials", "contact"];
+  var state = { items: [], rounds: [], refs: [], laws: [], prices: {}, loaded: { items: false, rounds: false }, error: null, cat: "all", q: "", sort: "round", open: {}, view: "news", range: "5y", region: "ส่วนกลาง" };
+  var VIEWS = ["news", "refs", "laws", "prices", "materials", "contact"];
   function setView() {
     var h = (location.hash || "").replace("#", "");
     var parts = h.split("/"); h = parts[0];
     state.refId = h === "refs" && parts[1] ? decodeURIComponent(parts[1]) : null;
+    state.lawId = h === "laws" && parts[1] ? decodeURIComponent(parts[1]) : null;
     state.view = VIEWS.indexOf(h) >= 0 ? h : "news";
     VIEWS.forEach(function (v) { $("view-" + v).hidden = v !== state.view; });
     [].forEach.call(document.querySelectorAll("#tabs a"), function (a) { if (a.dataset.view === state.view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
-    $("q").placeholder = state.view === "refs" ? "ค้นหาค่ากำหนด เช่น ระยะร่น, ทางลาด, ป้าย, ที่จอดรถ" : state.view === "prices" ? "ค้นหาประกาศด้านราคา เช่น ค่า K, ดัชนี" : state.view === "materials" ? "ค้นหาวัสดุ เช่น SD40, H-Beam, ท่อ PVC, THW" : "ค้นหาชื่อกฎหมาย หน่วยงาน หรือคำ เช่น ผังเมือง, มอก.";
+    $("q").placeholder = state.view === "laws" ? "ค้นทั้งเว็บ เช่น ลิฟต์, ฉบับที่ 33, ระยะร่น, SD40" : state.view === "refs" ? "ค้นหาค่ากำหนด เช่น ระยะร่น, ทางลาด, ป้าย, ที่จอดรถ" : state.view === "prices" ? "ค้นหาประกาศด้านราคา เช่น ค่า K, ดัชนี" : state.view === "materials" ? "ค้นหาวัสดุ เช่น SD40, H-Beam, ท่อ PVC, THW" : "ค้นหาชื่อกฎหมาย หน่วยงาน หรือคำ เช่น ผังเมือง, มอก.";
     renderAll();
-    if (state.view === "refs") { var t = $("tabs"); if (t && t.getBoundingClientRect().top < 0) t.scrollIntoView(); }
+    if (state.view === "refs" || state.view === "laws") { var t = $("tabs"); if (t && t.getBoundingClientRect().top < 0) t.scrollIntoView(); }
   }
   window.addEventListener("hashchange", setView);
 
@@ -782,6 +824,78 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     if (!n) { box.appendChild(stateBox("ไม่พบค่าที่ตรงกับคำค้น", "ลองคำอื่น เช่น ระยะร่น, บันได, ห้องน้ำ")); return; }
     box.appendChild(ul);
   }
+  function lawText(L) { return [L.title, L.summary, L.kind].concat((L.versions || []).map(function (v) { return [v.label, v.title, v.note, v.gazette].map(str).join(" "); })).map(str).join(" ").toLowerCase(); }
+  function gazLine(v) {
+    var bits = [];
+    if (str(v.gazette)) bits.push("ราชกิจจาฯ " + v.gazette);
+    if (th(v.published)) bits.push("ประกาศ " + th(v.published));
+    if (th(v.effective)) bits.push("มีผล " + th(v.effective));
+    return bits.join(" · ");
+  }
+  function renderLawCard(box, L) {
+    var s = el("section", "ref"); s.id = "law-" + L.id;
+    var h = el("div", "ref-head"); h.appendChild(el("h2", null, str(L.title)));
+    h.appendChild(el("span", "lawst", str(L.kind) + " · " + str(L.status))); s.appendChild(h);
+    if (str(L.summary)) s.appendChild(el("p", "scope", L.summary));
+    var ol = el("ol", "chain");
+    (L.versions || []).forEach(function (v) {
+      var li = el("li", v.role === "ยกเลิกแล้ว" ? "gone" : null);
+      var top = el("div"); top.appendChild(el("span", "vl", str(v.label))); top.appendChild(el("span", "vr", str(v.role))); li.appendChild(top);
+      li.appendChild(el("p", "vt", str(v.title)));
+      var g = gazLine(v); if (g) li.appendChild(el("p", "vg", g));
+      if (str(v.note)) li.appendChild(el("p", "vn", v.note));
+      var foot = el("p", "vg"), any = false;
+      var u = safeUrl(v.url); if (u) { var a = el("a", null, "เปิดตัวบท ↗"); a.href = u.href; a.target = "_blank"; a.rel = "noopener noreferrer"; foot.appendChild(a); any = true; }
+      if (v.verified === false) { if (any) foot.appendChild(document.createTextNode("  ")); foot.appendChild(el("span", "vu", "ยังไม่ได้เทียบราชกิจจาฯ")); any = true; }
+      if (any) li.appendChild(foot);
+      ol.appendChild(li);
+    });
+    s.appendChild(ol);
+    var refs = (L.refs || []).map(function (id) { return state.refs.filter(function (r) { return r.id === id; })[0]; }).filter(Boolean);
+    if (refs.length) { var rr = el("div", "rel"); rr.appendChild(document.createTextNode("เกณฑ์อ้างอิงที่ใช้กฎหมายนี้:")); refs.forEach(function (r) { var a = el("a", "pill", str(r.title)); a.href = "#refs/" + encodeURIComponent(r.id); rr.appendChild(a); }); s.appendChild(rr); }
+    var its = (L.items || []).map(function (id) { return state.items.filter(function (x) { return x.id === id; })[0]; }).filter(Boolean);
+    if (its.length) {
+      s.appendChild(el("p", "law", "ข่าวที่เกี่ยวข้องในหน้าข่าวกฎหมาย"));
+      var ul = el("ul", "linklist");
+      its.forEach(function (x) { var u = safeUrl(x.url); var li = el("li"); var a = el("a"); if (u) { a.href = u.href; a.target = "_blank"; a.rel = "noopener noreferrer"; } a.appendChild(el("span", null, str(x.title) + (x.verified === false ? " (ยังไม่ยืนยัน)" : ""))); a.appendChild(icon("i-ext")); li.appendChild(a); ul.appendChild(li); });
+      s.appendChild(ul);
+    }
+    if (th(L.checked)) s.appendChild(el("p", "law", "รวบรวมเมื่อ " + th(L.checked) + " · ข้อมูลที่ติดป้าย “ยังไม่ได้เทียบราชกิจจาฯ” ควรเปิดตัวบทต้นฉบับประกอบก่อนอ้างอิง"));
+    box.appendChild(s);
+  }
+  function globalSearch(box, q) {
+    var wrap = el("div", "gs"), total = 0;
+    function sec(title, rows) { if (!rows.length) return; total += rows.length; wrap.appendChild(el("h3", null, title + " (" + rows.length + ")")); var ul = el("ul"); rows.slice(0, 12).forEach(function (r) { var li = el("li"), a = el("a"); a.href = r.href; if (r.ext) { a.target = "_blank"; a.rel = "noopener noreferrer"; } a.appendChild(el("span", "gt", r.t)); if (r.m) a.appendChild(el("span", "gm", r.m)); li.appendChild(a); ul.appendChild(li); }); if (rows.length > 12) { var li2 = el("li"); li2.appendChild(el("span", "gm", "และอีก " + (rows.length - 12) + " รายการ")); ul.appendChild(li2); } wrap.appendChild(ul); }
+    sec("ตัวบทและการแก้ไข", (state.laws || []).filter(function (L) { return lawText(L).indexOf(q) !== -1; }).map(function (L) { return { t: str(L.title), m: str(L.kind) + " · " + (L.versions || []).length + " ฉบับ", href: "#laws/" + encodeURIComponent(L.id) }; }));
+    sec("เกณฑ์อ้างอิง", sortedRefs().map(function (r) { return { r: r, n: refMatches(r, q).length }; }).filter(function (o) { return o.n; }).map(function (o) { return { t: str(o.r.title), m: "พบ " + o.n + " ค่า", href: "#refs/" + encodeURIComponent(o.r.id) }; }));
+    sec("ข่าวกฎหมาย", state.items.filter(function (it) { return [it.title, it.agency, it.summary, it.impact].map(str).join(" ").toLowerCase().indexOf(q) !== -1; }).map(function (it) { var u = safeUrl(it.url); return { t: str(it.title), m: [str(it.agency), th(it.published)].filter(Boolean).join(" · "), href: u ? u.href : "#news", ext: !!u }; }));
+    var mc = 0, mlist = [];
+    if (state.matc) { var regs = [["ส่วนกลาง", state.matc.cats || []]].concat(Object.keys(state.matc.provinces || {}).map(function (k) { return [k, state.matc.provinces[k]]; })); var seen = {}; regs.forEach(function (rg) { rg[1].forEach(function (c) { c.items.forEach(function (x) { if (str(x.n).toLowerCase().indexOf(q) === -1) return; mc++; var k = cmpKey(x.n); if (seen[k]) { seen[k].n++; return; } seen[k] = { t: str(x.n), n: 1 }; mlist.push(seen[k]); }); }); }); }
+    sec("ราคาวัสดุ", mlist.map(function (o) { return { t: o.t, m: "มีราคา " + o.n + " พื้นที่", href: "#materials" }; }));
+    if (!total) { box.appendChild(stateBox("ไม่พบคำนี้ในเว็บ", "ลองคำอื่น เช่น ลิฟต์, ที่จอดรถ, ฉบับที่ 55")); return; }
+    box.appendChild(wrap);
+  }
+  function renderLaws() {
+    var box = $("laws"); box.textContent = "";
+    $("lawsnote").hidden = !!state.lawId;
+    if (!state.laws.length) { box.appendChild(stateBox(state.error ? "โหลดข้อมูลไม่ได้" : "กำลังโหลดตัวบท…", state.error)); return; }
+    if (state.q) return globalSearch(box, state.q);
+    if (state.lawId) {
+      var L = state.laws.filter(function (x) { return x.id === state.lawId; })[0];
+      if (L) { var bar = el("div", "backbar"), back = el("a", null, "← ตัวบททั้งหมด"); back.href = "#laws"; bar.appendChild(back); box.appendChild(bar); return renderLawCard(box, L); }
+    }
+    var ul = el("ul", "topics");
+    state.laws.forEach(function (L, i) {
+      var li = el("li"), a = el("a"); a.href = "#laws/" + encodeURIComponent(L.id);
+      a.appendChild(el("span", "tn", String(i + 1)));
+      a.appendChild(el("span", "tt", str(L.title)));
+      a.appendChild(el("span", "tc", (L.versions || []).length + " ฉบับ"));
+      var last = (L.versions || []).filter(function (v) { return v.role !== "ยกเลิกแล้ว"; }).pop();
+      a.appendChild(el("span", "tl", str(L.kind) + (last ? " · ล่าสุด: " + str(last.label) + (th(last.published) ? " (" + th(last.published) + ")" : "") : "")));
+      li.appendChild(a); ul.appendChild(li);
+    });
+    box.appendChild(ul);
+  }
   function renderRefDetail(box, r) {
     var bar = el("div", "backbar"), back = el("a", null, "← หัวข้อทั้งหมด"); back.href = "#refs"; bar.appendChild(back);
     var list = sortedRefs(), idx = list.indexOf(r), nx = list[idx + 1];
@@ -798,6 +912,8 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
       var u = safeUrl(r.law_url);
       if (u) { var a = el("a", null, "เปิดตัวบท ↗"); a.href = u.href; a.target = "_blank"; a.rel = "noopener noreferrer"; law.appendChild(a); }
       s.appendChild(law);
+      var fam = (state.laws || []).filter(function (L) { return (L.refs || []).indexOf(r.id) !== -1; });
+      if (fam.length) { var fl = el("p", "law"); fl.appendChild(document.createTextNode("สายการแก้ไข: ")); fam.forEach(function (L, i) { if (i) fl.appendChild(document.createTextNode(" · ")); var fa = el("a", null, str(L.title)); fa.href = "#laws/" + encodeURIComponent(L.id); fl.appendChild(fa); }); s.appendChild(fl); }
       if (str(r.scope)) s.appendChild(el("p", "scope", r.scope));
       if (str(r.pending)) s.appendChild(el("p", "pending", "กำลังจะเปลี่ยน: " + r.pending));
       if (q && !rows.length) s.appendChild(stateBox("ไม่พบค่าที่ตรงกับคำค้นในหัวข้อนี้", "ล้างช่องค้นหาเพื่อดูทั้งหมด"));
@@ -1106,6 +1222,111 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     });
     t.appendChild(tb); w.appendChild(t); box.appendChild(w); sec.appendChild(box);
   }
+  var TPSO_TYPE = { "ส่วนกลาง": 10, "เชียงใหม่": 50, "เพชรบูรณ์": 67, "นครราชสีมา": 30, "ขอนแก่น": 40, "ชลบุรี": 20, "ภูเก็ต": 83, "ตรัง": 92, "สงขลา": 90 };
+  function codeFor(region, idx, p) {
+    var mc = state.prices.matc_codes, t = TPSO_TYPE[region];
+    if (!mc || !mc.by_type || !t) return null;
+    var a = mc.by_type[String(t)]; if (!a || !a[idx]) return null;
+    var r = a[idx]; return r[0] === idx && Math.abs(Number(r[2]) - p) < 0.006 ? r[1] : null;
+  }
+  function ymLabel(ym) { return fmtMon.format(new Date(Math.floor(ym / 100) - 543, ym % 100 - 1, 1)); }
+  function openHist(region, code, name, unit) { state.hist = { region: region, code: code, name: name, unit: unit, range: (state.hist && state.hist.range) || 60, rows: null }; renderMaterials(); loadHist(); }
+  function loadHist() {
+    var h = state.hist; if (!h) return;
+    var t = TPSO_TYPE[h.region]; var key = t + ":" + h.code;
+    state.histCache = state.histCache || {};
+    if (state.histCache[key]) { h.rows = state.histCache[key]; renderMaterials(); return; }
+    fetch(SB + "/rest/v1/tpso_price?select=ym,price&type=eq." + t + "&code=eq." + encodeURIComponent(h.code) + "&order=ym.asc&limit=1000", { headers: HDR })
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (rows) { state.histCache[key] = rows.map(function (x) { return [x.ym, Number(x.price)]; }); if (state.hist === h) { h.rows = state.histCache[key]; renderMaterials(); } })
+      .catch(function () { if (state.hist === h) { h.rows = []; h.err = true; renderMaterials(); } });
+  }
+  function histChart(rows, unit) {
+    var ns = "http://www.w3.org/2000/svg", W = 640, H = 220, L = 56, R = 12, T = 12, B = 28;
+    var svg = document.createElementNS(ns, "svg"); svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.setAttribute("class", "hchart");
+    var ys = rows.map(function (r) { return r[1]; }), lo = Math.min.apply(null, ys), hi = Math.max.apply(null, ys);
+    if (hi === lo) { hi += Math.max(1, hi * 0.05); lo -= Math.max(1, lo * 0.05); }
+    var pad = (hi - lo) * 0.08; lo -= pad; hi += pad;
+    var n = rows.length - 1 || 1, X = function (i) { return L + i * (W - L - R) / n; }, Y = function (y) { return T + (hi - y) * (H - T - B) / (hi - lo); };
+    for (var g = 0; g <= 3; g++) { var gy = lo + (hi - lo) * g / 3, yy = Y(gy); var ln = document.createElementNS(ns, "line"); ln.setAttribute("x1", L); ln.setAttribute("x2", W - R); ln.setAttribute("y1", yy); ln.setAttribute("y2", yy); ln.setAttribute("class", "gx"); svg.appendChild(ln); var tx = document.createElementNS(ns, "text"); tx.setAttribute("x", L - 6); tx.setAttribute("y", yy + 4); tx.setAttribute("text-anchor", "end"); tx.textContent = gy >= 1000 ? Math.round(gy).toLocaleString("th-TH") : fmt2(Math.round(gy * 100) / 100); svg.appendChild(tx); }
+    var step = Math.max(1, Math.ceil(rows.length / 6));
+    rows.forEach(function (r, i) { if (i % step && i !== rows.length - 1) return; var tx = document.createElementNS(ns, "text"); tx.setAttribute("x", X(i)); tx.setAttribute("y", H - 8); tx.setAttribute("text-anchor", i === 0 ? "start" : i === rows.length - 1 ? "end" : "middle"); tx.textContent = ymLabel(r[0]); svg.appendChild(tx); });
+    var d = rows.map(function (r, i) { return (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(r[1]).toFixed(1); }).join(" ");
+    var area = document.createElementNS(ns, "path"); area.setAttribute("d", d + " L" + X(rows.length - 1).toFixed(1) + " " + (H - B) + " L" + L + " " + (H - B) + " Z"); area.setAttribute("class", "ha"); svg.appendChild(area);
+    var path = document.createElementNS(ns, "path"); path.setAttribute("d", d); path.setAttribute("class", "hl"); svg.appendChild(path);
+    rows.forEach(function (r, i) { var c = document.createElementNS(ns, "circle"); c.setAttribute("cx", X(i)); c.setAttribute("cy", Y(r[1])); c.setAttribute("r", rows.length > 60 ? 1.5 : 2.5); c.setAttribute("class", "hd"); var tt = document.createElementNS(ns, "title"); tt.textContent = ymLabel(r[0]) + " " + fmt2(r[1]) + " บาท/" + unit; c.appendChild(tt); svg.appendChild(c); });
+    svg.setAttribute("role", "img"); svg.setAttribute("aria-label", "กราฟราคารายเดือน " + ymLabel(rows[0][0]) + " ถึง " + ymLabel(rows[rows.length - 1][0]));
+    return svg;
+  }
+  function renderHist(sec) {
+    var h = state.hist; if (!h) return;
+    var box = el("div", "cmpbox histbox"); box.id = "histbox";
+    var hd = el("div", "cmphead"), tt = el("div");
+    tt.appendChild(el("h3", null, "ประวัติราคารายเดือน: " + h.name));
+    tt.appendChild(el("p", "sub", (h.region === "ส่วนกลาง" ? "ส่วนกลาง (กรุงเทพฯ)" : "จังหวัด" + h.region) + " · ราคา สนค. ไม่รวม VAT · หน่วย " + h.unit));
+    hd.appendChild(tt);
+    var x = el("button", "pill", "ปิด"); x.type = "button"; x.addEventListener("click", function () { state.hist = null; renderMaterials(); }); hd.appendChild(x);
+    box.appendChild(hd);
+    if (!h.rows) { box.appendChild(el("p", "sub", "กำลังโหลดประวัติราคา…")); sec.appendChild(box); return; }
+    if (!h.rows.length) { box.appendChild(el("p", "sub", h.err ? "โหลดประวัติราคาไม่สำเร็จ ลองใหม่อีกครั้ง" : "ยังไม่มีประวัติราคาของรายการนี้")); sec.appendChild(box); return; }
+    var pills = el("div", "hpills");
+    [[12, "1 ปี"], [36, "3 ปี"], [60, "5 ปี"], [0, "ทั้งหมด"]].forEach(function (o) { var b = el("button", "pill", o[1]); b.type = "button"; b.setAttribute("aria-pressed", h.range === o[0] ? "true" : "false"); b.addEventListener("click", function () { h.range = o[0]; renderMaterials(); var b2 = document.getElementById("histbox"); if (b2) b2.scrollIntoView({ block: "nearest" }); }); pills.appendChild(b); });
+    box.appendChild(pills);
+    var rows = h.range ? h.rows.slice(-h.range) : h.rows;
+    if (rows.length < 2) { box.appendChild(el("p", "sub", "มีข้อมูลเพียง " + rows.length + " เดือน")); sec.appendChild(box); return; }
+    box.appendChild(histChart(rows, h.unit));
+    var ys = rows.map(function (r) { return r[1]; }), lo = Math.min.apply(null, ys), hi = Math.max.apply(null, ys), f = rows[0], l = rows[rows.length - 1];
+    var st = el("div", "hstats");
+    function stat(lbl, v) { var sp = el("span"); sp.appendChild(document.createTextNode(lbl + " ")); sp.appendChild(el("b", null, v)); st.appendChild(sp); }
+    stat("ล่าสุด " + ymLabel(l[0]), fmt2(l[1]) + " บาท");
+    stat("เปลี่ยนจาก " + ymLabel(f[0]), (l[1] >= f[1] ? "+" : "") + ((l[1] / f[1] - 1) * 100).toFixed(1) + "%");
+    stat("ต่ำสุด", fmt2(lo)); stat("สูงสุด", fmt2(hi)); stat("ข้อมูล", rows.length + " เดือน");
+    box.appendChild(st);
+    var dl = el("button", "cmpbtn", "ดาวน์โหลด CSV"); dl.type = "button"; dl.style.marginLeft = "0"; dl.style.marginTop = "10px";
+    dl.addEventListener("click", function () { var csv = "﻿เดือน,ราคา (บาท/" + h.unit + ")\n" + h.rows.map(function (r) { return ymLabel(r[0]) + "," + r[1]; }).join("\n"); var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })); a.download = "ราคา-" + h.region + "-" + h.code + ".csv"; a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000); });
+    box.appendChild(dl);
+    sec.appendChild(box);
+  }
+  function renderDbSearch(sec) {
+    var q = state.q, t = TPSO_TYPE[state.region];
+    if (!q || q.length < 2 || !t) return;
+    var key = t + "|" + q, wrap = el("div", "dbsearch");
+    wrap.appendChild(el("h3", null, "ค้นในฐานข้อมูล สนค. ทุกรายการ (" + (state.region === "ส่วนกลาง" ? "ส่วนกลาง" : "จังหวัด" + state.region) + ")"));
+    state.dbs = state.dbs || {};
+    var res = state.dbs[key];
+    if (!res) {
+      wrap.appendChild(el("p", "sub", "กำลังค้น…"));
+      state.dbs[key] = "loading";
+      clearTimeout(state.dbsT);
+      state.dbsT = setTimeout(function () {
+        var pat = "*" + q.replace(/[*,()]/g, " ").trim() + "*";
+        fetch(SB + "/rest/v1/tpso_items?select=code,name,unit,last_ym&type=eq." + t + "&name=ilike." + encodeURIComponent(pat) + "&order=last_ym.desc,name.asc&limit=40", { headers: HDR })
+          .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+          .then(function (items) {
+            if (!items.length) return [items, []];
+            var codes = items.map(function (x) { return '"' + x.code + '"'; }).join(",");
+            return fetch(SB + "/rest/v1/tpso_price?select=code,ym,price&type=eq." + t + "&code=in.(" + encodeURIComponent(codes) + ")&ym=gte.256801&order=ym.desc", { headers: HDR }).then(function (r) { return r.ok ? r.json() : []; }).then(function (pr) { return [items, pr]; });
+          })
+          .then(function (z) { var last = {}; z[1].forEach(function (p) { if (!last[p.code]) last[p.code] = p; }); state.dbs[key] = z[0].map(function (x) { return { code: x.code, name: x.name, unit: x.unit, last: last[x.code] || null, ym: x.last_ym }; }); if (state.q === q) renderMaterials(); })
+          .catch(function () { state.dbs[key] = []; if (state.q === q) renderMaterials(); });
+      }, 350);
+    } else if (res === "loading") { wrap.appendChild(el("p", "sub", "กำลังค้น…")); }
+    else if (!res.length) { wrap.appendChild(el("p", "sub", "ไม่พบรายการที่ตรงกับคำค้น")); }
+    else {
+      var tb = el("table"), b = el("tbody");
+      res.forEach(function (x) {
+        var tr = el("tr"), nd = el("td", null, x.name);
+        var hb = el("button", "cmpbtn", "ประวัติราคา"); hb.type = "button"; hb.addEventListener("click", function () { openHist(state.region, x.code, x.name, str(x.unit)); var bx = document.getElementById("histbox"); if (bx) bx.scrollIntoView({ behavior: "smooth", block: "start" }); }); nd.appendChild(hb);
+        tr.appendChild(nd); tr.appendChild(el("td", "cl", str(x.unit)));
+        tr.appendChild(el("td", "num val", x.last ? fmt2(Number(x.last.price)) : "—"));
+        tr.appendChild(el("td", "cl", x.last ? ymLabel(x.last.ym) : (x.ym ? "ล่าสุด " + ymLabel(x.ym) : "")));
+        b.appendChild(tr);
+      });
+      tb.appendChild(b); var w = el("div", "tblwrap"); w.appendChild(tb); wrap.appendChild(w);
+      if (res.length === 40) wrap.appendChild(el("p", "sub", "แสดง 40 รายการแรก พิมพ์คำให้เจาะจงขึ้นเพื่อจำกัดผล"));
+    }
+    sec.appendChild(wrap);
+  }
   function renderSnk(box, regionNames, cats) {
     var d = Object.assign({}, state.matc, { cats: cats, region: state.region === "ส่วนกลาง" ? state.matc.region : "จังหวัด" + state.region }), q = state.q, cat = state.mcat;
     if (!cats.some(function (c) { return c.id === cat; })) cat = cats[0].id;
@@ -1133,10 +1354,13 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     cp.appendChild(el("span", "count", shownCats.reduce(function (n, c) { return n + c.items.length; }, 0) + " จาก " + total + " รายการ"));
     sec.appendChild(cp);
     if (state.cmp) renderCmp(sec);
+    if (state.hist) renderHist(sec);
+    renderDbSearch(sec);
     var HL = d.labels || ["เดือนก่อน", "3 เดือนก่อน", "6 เดือนก่อน", "1 ปีก่อน"];
     var QM = state.region === "ส่วนกลาง" && Array.isArray(d.qm) ? d.qm : null;
     var nc = 3 + HL.length + (QM ? 2 : 0);
-    var w = el("div", "tblwrap"); var t = el("table", "rt mcomp"); var tb = el("tbody"), shown = 0;
+    var w = el("div", "tblwrap"); var t = el("table", "rt mcomp"); var tb = el("tbody"), shown = 0, gidx = 0, idxOf = new Map();
+    d.cats.forEach(function (c) { c.items.forEach(function (x) { idxOf.set(x, gidx++); }); });
     d.cats.forEach(function (c) {
       if (cat !== "all" && c.id !== cat) return;
       var rows = c.items.filter(function (x) { return !q || (c.name + " " + x.n).toLowerCase().indexOf(q) !== -1; });
@@ -1146,6 +1370,8 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
       rows.forEach(function (x) {
         var tr = el("tr"); var nd = el("td", null, str(x.n));
         var ck = cmpKey(x.n), cl = cmpIndex()[ck];
+        var hc = codeFor(state.region, idxOf.get(x), x.p);
+        if (hc) { var hbtn = el("button", "cmpbtn", "ประวัติราคา"); hbtn.type = "button"; hbtn.addEventListener("click", function () { openHist(state.region, hc, str(x.n), str(x.u)); var bx = document.getElementById("histbox"); if (bx) bx.scrollIntoView({ behavior: "smooth", block: "start" }); }); nd.appendChild(hbtn); }
         if (cl && cl.length > 1) { var cb = el("button", "cmpbtn", "เทียบ " + cl.length + " พื้นที่"); cb.type = "button"; cb.setAttribute("aria-label", "เทียบราคา " + str(x.n) + " ทุกพื้นที่"); cb.addEventListener("click", function () { state.cmp = ck; renderMaterials(); var bx = document.getElementById("cmpbox"); if (bx) bx.scrollIntoView({ behavior: "smooth", block: "start" }); }); nd.appendChild(cb); }
         tr.appendChild(nd); tr.appendChild(el("td", "cl", str(x.u)));
         tr.appendChild(el("td", "num val", typeof x.p === "number" ? x.p.toLocaleString("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—"));
@@ -1331,6 +1557,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     renderTop();
     if (state.view === "news") { renderDue(); renderPills(); renderList(); }
     else if (state.view === "refs") renderRefs();
+    else if (state.view === "laws") renderLaws();
     else if (state.view === "materials") renderMaterials();
     else renderPrices();
   }
@@ -1348,17 +1575,19 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     if (!r.ok) throw { code: "http " + r.status };
     return r.json();
   }).then(function (rows) {
-    var items = [], rounds = [], refs = [], prices = {};
+    var items = [], rounds = [], refs = [], prices = {}, laws = [];
     rows.forEach(function (row) {
       var x = Object.assign({}, row.data || {}); x.id = row.id;
       if (row.collection === "items") items.push(x);
       else if (row.collection === "rounds") rounds.push(x);
       else if (row.collection === "refs") refs.push(x);
+      else if (row.collection === "laws") laws.push(x);
       else if (row.collection === "prices") prices[row.id] = row.data;
     });
     items.sort(function (p, q) { return str(q.round).localeCompare(str(p.round)) || str(q.id).localeCompare(str(p.id)); });
     rounds.sort(function (p, q) { return str(q.date).localeCompare(str(p.date)); });
     state.items = items; state.rounds = rounds; state.refs = refs; state.prices = prices;
+    laws.sort(function (a, b) { return (a.order || 99) - (b.order || 99); }); state.laws = laws;
     state.loaded.items = state.loaded.rounds = true; clearTimeout(timer); state.error = null; renderAll();
   }).catch(onErr);
   initFeedback();
