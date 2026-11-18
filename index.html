@@ -178,6 +178,9 @@ h1 .soft { color: hsl(var(--muted-foreground)); }
 .histbox .hstats b { color: hsl(var(--foreground)); font-weight: 600; }
 .histbox .hpills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 @media (max-width: 640px) { .histbox .hchart text { font-size: 20px; } }
+.aprow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 12px 0; }
+.aplab { font-size: 14px; margin-right: 6px; }
+.apsel { font: inherit; font-size: 14px; height: 34px; padding: 0 10px; border-radius: 8px; border: 1px solid hsl(var(--border)); background: hsl(var(--card)); color: hsl(var(--foreground)); }
 .dbsearch { margin: 20px 0 8px; }
 .dbsearch h3 { margin: 0 0 6px; font-size: 15px; font-weight: 600; }
 .dbsearch table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -1230,11 +1233,16 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     var a = mc.by_type[String(t)]; if (!a || !a[idx]) return null;
     var r = a[idx]; return r[0] === idx && Math.abs(Number(r[2]) - p) < 0.006 ? r[1] : null;
   }
+  var ALLP = [[10,"ส่วนกลาง"],[14,"พระนครศรีอยุธยา"],[15,"อ่างทอง"],[16,"ลพบุรี"],[17,"สิงห์บุรี"],[18,"ชัยนาท"],[19,"สระบุรี"],[20,"ชลบุรี"],[21,"ระยอง"],[22,"จันทบุรี"],[23,"ตราด"],[24,"ฉะเชิงเทรา"],[25,"ปราจีนบุรี"],[26,"นครนายก"],[27,"สระแก้ว"],[30,"นครราชสีมา"],[31,"บุรีรัมย์"],[32,"สุรินทร์"],[33,"ศรีสะเกษ"],[34,"อุบลราชธานี"],[35,"ยโสธร"],[36,"ชัยภูมิ"],[37,"อำนาจเจริญ"],[38,"บึงกาฬ"],[39,"หนองบัวลำภู"],[40,"ขอนแก่น"],[41,"อุดรธานี"],[42,"เลย"],[43,"หนองคาย"],[44,"มหาสารคาม"],[45,"ร้อยเอ็ด"],[46,"กาฬสินธุ์"],[47,"สกลนคร"],[48,"นครพนม"],[49,"มุกดาหาร"],[50,"เชียงใหม่"],[51,"ลำพูน"],[52,"ลำปาง"],[53,"อุตรดิตถ์"],[54,"แพร่"],[55,"น่าน"],[56,"พะเยา"],[57,"เชียงราย"],[58,"แม่ฮ่องสอน"],[60,"นครสวรรค์"],[61,"อุทัยธานี"],[62,"กำแพงเพชร"],[63,"ตาก"],[64,"สุโขทัย"],[65,"พิษณุโลก"],[66,"พิจิตร"],[67,"เพชรบูรณ์"],[70,"ราชบุรี"],[71,"กาญจนบุรี"],[72,"สุพรรณบุรี"],[73,"นครปฐม"],[74,"สมุทรสาคร"],[75,"สมุทรสงคราม"],[76,"เพชรบุรี"],[77,"ประจวบคีรีขันธ์"],[80,"นครศรีธรรมราช"],[81,"กระบี่"],[82,"พังงา"],[83,"ภูเก็ต"],[84,"สุราษฎร์ธานี"],[85,"ระนอง"],[86,"ชุมพร"],[90,"สงขลา"],[91,"สตูล"],[92,"ตรัง"],[93,"พัทลุง"],[94,"ปัตตานี"],[95,"ยะลา"],[96,"นราธิวาส"]], ALLT = {}, PNAME = {};
+  ALLP.forEach(function (p) { ALLT[p[1]] = p[0]; PNAME[p[0]] = p[1]; });
+  function typeOf(region) { return TPSO_TYPE[region] || ALLT[region]; }
+  function isoYm(iso) { var m = /^(\d{4})-(\d{2})/.exec(str(iso)); return m ? (Number(m[1]) + 543) * 100 + Number(m[2]) : null; }
+  function ymAdd(ym, k) { var t = Math.floor(ym / 100) * 12 + (ym % 100 - 1) + k; return Math.floor(t / 12) * 100 + (t % 12) + 1; }
   function ymLabel(ym) { return fmtMon.format(new Date(Math.floor(ym / 100) - 543, ym % 100 - 1, 1)); }
   function openHist(region, code, name, unit) { state.hist = { region: region, code: code, name: name, unit: unit, range: (state.hist && state.hist.range) || 60, rows: null }; renderMaterials(); loadHist(); }
   function loadHist() {
     var h = state.hist; if (!h) return;
-    var t = TPSO_TYPE[h.region]; var key = t + ":" + h.code;
+    var t = typeOf(h.region); var key = t + ":" + h.code;
     state.histCache = state.histCache || {};
     if (state.histCache[key]) { h.rows = state.histCache[key]; renderMaterials(); return; }
     fetch(SB + "/rest/v1/tpso_price?select=ym,price&type=eq." + t + "&code=eq." + encodeURIComponent(h.code) + "&order=ym.asc&limit=1000", { headers: HDR })
@@ -1437,6 +1445,104 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
   function thDate(d) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(str(d)); return m ? fmt.format(new Date(+m[1], +m[2] - 1, +m[3])) : str(d); }
   function fmt2(v) { return v.toLocaleString("th-TH", { maximumFractionDigits: 2 }); }
   function loNum(v) { if (typeof v === "number") return v; var m = str(v).replace(/,/g, "").match(/\d+(\.\d+)?/); return m ? parseFloat(m[0]) : null; }
+  function apType() { if (state.apType && PNAME[state.apType]) return state.apType; return typeOf(state.region) || 10; }
+  function renderAllProv(box) {
+    var t = apType(), q = state.q, latest = isoYm(state.matc && state.matc.month) || 256910;
+    var sec = el("section", "psec"); sec.id = "allprov";
+    var hd = el("div", "chhead"); hd.appendChild(el("h2", null, "ค้นราคา สนค. ได้ทุกจังหวัด (74 พื้นที่)")); sec.appendChild(hd);
+    sec.appendChild(el("div", "sub", "เลือกจังหวัด แล้วพิมพ์ชื่อวัสดุในช่องค้นหาด้านบนหรือกดคำค้นด่วน · ราคาไม่รวม VAT · 9 พื้นที่หลักมีประวัติ 10 ปี จังหวัดอื่นเริ่มเก็บย้อนหลัง 2 ปี และอัปเดตเองทุกเดือน"));
+    var row = el("div", "aprow");
+    var lab = el("label", "aplab"); lab.appendChild(document.createTextNode("จังหวัด "));
+    var sel = document.createElement("select"); sel.className = "apsel";
+    ALLP.forEach(function (p) { var o = document.createElement("option"); o.value = p[0]; o.textContent = p[1]; if (p[0] === t) o.selected = true; sel.appendChild(o); });
+    sel.addEventListener("change", function () { state.apType = Number(sel.value); state.apCmp = null; renderMaterials(); var b = $("allprov"); if (b) b.scrollIntoView({ block: "start" }); });
+    lab.appendChild(sel); row.appendChild(lab);
+    ["คอนกรีตผสมเสร็จ", "ปูนซีเมนต์", "เหล็กข้ออ้อย", "เหล็กเส้นกลม", "อิฐมอญ", "ทราย", "หินย่อย", "ท่อ PVC", "กระเบื้อง", "ไม้อัด"].forEach(function (w) {
+      var b = el("button", "pill", w); b.type = "button"; b.setAttribute("aria-pressed", q === w.toLowerCase() ? "true" : "false");
+      b.addEventListener("click", function () { $("q").value = w; state.q = w.toLowerCase(); renderAll(); var bb = $("allprov"); if (bb) bb.scrollIntoView({ block: "start" }); });
+      row.appendChild(b);
+    });
+    sec.appendChild(row);
+    if (state.apCmp) renderApCmp(sec, latest);
+    if (!q || q.length < 2) { sec.appendChild(el("p", "sub", "ยังไม่มีคำค้น")); box.appendChild(sec); return; }
+    state.apRes = state.apRes || {};
+    var key = t + "|" + q, res = state.apRes[key];
+    if (!res) {
+      state.apRes[key] = "loading";
+      var pat = "*" + q.replace(/[*,()]/g, " ").trim() + "*";
+      fetch(SB + "/rest/v1/tpso_items?select=code,name,unit,last_ym&type=eq." + t + "&name=ilike." + encodeURIComponent(pat) + "&order=last_ym.desc,name.asc&limit=60", { headers: HDR })
+        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+        .then(function (items) {
+          if (!items.length) return [items, []];
+          var codes = items.map(function (x) { return '"' + x.code + '"'; }).join(",");
+          return fetch(SB + "/rest/v1/tpso_price?select=code,ym,price&type=eq." + t + "&code=in.(" + encodeURIComponent(codes) + ")&ym=gte." + ymAdd(latest, -13) + "&order=ym.desc", { headers: HDR }).then(function (r) { return r.ok ? r.json() : []; }).then(function (pr) { return [items, pr]; });
+        })
+        .then(function (z) {
+          var by = {}; z[1].forEach(function (p) { (by[p.code] = by[p.code] || []).push(p); });
+          state.apRes[key] = z[0].map(function (x) {
+            var ps = by[x.code] || [], l = ps[0] || null, y = null;
+            if (l) { var target = ymAdd(l.ym, -12); ps.forEach(function (p) { if (p.ym === target) y = p; }); }
+            return { code: x.code, name: x.name, unit: x.unit, last: l, yago: y, ym: x.last_ym };
+          }).sort(function (a, b) { return (b.last ? 1 : 0) - (a.last ? 1 : 0); });
+          if (state.q === q) renderMaterials();
+        })
+        .catch(function () { state.apRes[key] = []; if (state.q === q) renderMaterials(); });
+      res = "loading";
+    }
+    if (res === "loading") sec.appendChild(el("p", "sub", "กำลังค้นราคาจังหวัด" + PNAME[t] + "…"));
+    else if (!res.length) sec.appendChild(el("p", "sub", "ไม่พบ \"" + q + "\" ในรายการของ" + (t === 10 ? "ส่วนกลาง" : "จังหวัด" + PNAME[t]) + " (ถ้าเพิ่งเพิ่มจังหวัดนี้ ข้อมูลอาจกำลังทยอยเข้า ลองใหม่ภายหลัง)"));
+    else {
+      var w = el("div", "tblwrap"), tb = el("table", "rt mcomp"), th = el("thead"), hr = el("tr");
+      ["รายการ", "หน่วย", "ราคาล่าสุด (บาท)", "เดือน", "เทียบ 1 ปีก่อน"].forEach(function (h, i) { hr.appendChild(el("th", i > 1 ? "num" : null, h)); }); th.appendChild(hr); tb.appendChild(th);
+      var bd = el("tbody");
+      res.forEach(function (x) {
+        var tr = el("tr"), nd = el("td", null, x.name);
+        var hb = el("button", "cmpbtn", "ประวัติราคา"); hb.type = "button"; hb.addEventListener("click", function () { openHist(PNAME[t], x.code, x.name, str(x.unit)); var bx = $("histbox"); if (bx) bx.scrollIntoView({ behavior: "smooth", block: "start" }); }); nd.appendChild(hb);
+        var cb = el("button", "cmpbtn", "เทียบทุกจังหวัด"); cb.type = "button"; cb.addEventListener("click", function () { state.apCmp = { code: x.code, name: x.name, unit: str(x.unit), rows: null }; renderMaterials(); loadApCmp(latest); var bb = $("apcmp"); if (bb) bb.scrollIntoView({ behavior: "smooth", block: "start" }); }); nd.appendChild(cb);
+        tr.appendChild(nd); tr.appendChild(el("td", "cl", str(x.unit)));
+        tr.appendChild(el("td", "num val", x.last ? fmt2(Number(x.last.price)) : "—"));
+        tr.appendChild(el("td", "num", x.last ? ymLabel(x.last.ym) : (x.ym ? "ล่าสุด " + ymLabel(x.ym) : "—")));
+        tr.appendChild(x.last && x.yago ? chgCell(Number(x.last.price), Number(x.yago.price), ymLabel(x.yago.ym)) : el("td", "num", "—"));
+        bd.appendChild(tr);
+      });
+      tb.appendChild(bd); w.appendChild(tb); sec.appendChild(w);
+      if (res.length === 60) sec.appendChild(el("p", "sub", "แสดง 60 รายการแรก พิมพ์คำให้เจาะจงขึ้นเพื่อจำกัดผล"));
+    }
+    box.appendChild(sec);
+  }
+  function loadApCmp(latest) {
+    var c = state.apCmp; if (!c) return;
+    fetch(SB + "/rest/v1/tpso_price?select=type,ym,price&code=eq." + encodeURIComponent(c.code) + "&ym=gte." + ymAdd(latest, -3) + "&order=ym.desc&limit=1000", { headers: HDR })
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (rows) { var seen = {}; c.rows = rows.filter(function (r) { if (seen[r.type] || !PNAME[r.type]) return false; seen[r.type] = 1; return true; }).map(function (r) { return { t: r.type, ym: r.ym, p: Number(r.price) }; }).sort(function (a, b) { return a.p - b.p; }); if (state.apCmp === c) renderMaterials(); })
+      .catch(function () { c.rows = []; c.err = true; if (state.apCmp === c) renderMaterials(); });
+  }
+  function renderApCmp(sec, latest) {
+    var c = state.apCmp, box = el("div", "cmpbox"); box.id = "apcmp";
+    var hd = el("div", "cmphead"), tt = el("div");
+    tt.appendChild(el("h3", null, "เทียบราคาทุกจังหวัด: " + c.name));
+    tt.appendChild(el("p", "sub", "ราคาเดือนล่าสุดที่มีของแต่ละจังหวัด (ไม่เกิน 3 เดือน) · หน่วย " + c.unit + " · รหัส สนค. " + c.code));
+    hd.appendChild(tt);
+    var x = el("button", "pill", "ปิด"); x.type = "button"; x.addEventListener("click", function () { state.apCmp = null; renderMaterials(); }); hd.appendChild(x);
+    box.appendChild(hd);
+    if (!c.rows) { box.appendChild(el("p", "sub", "กำลังโหลด…")); sec.appendChild(box); return; }
+    if (!c.rows.length) { box.appendChild(el("p", "sub", c.err ? "โหลดไม่สำเร็จ ลองใหม่อีกครั้ง" : "ไม่พบราคาของรายการนี้ในช่วง 3 เดือนล่าสุด")); sec.appendChild(box); return; }
+    var ps = c.rows.map(function (r) { return r.p; }), mx = Math.max.apply(null, ps), mid = ps[Math.floor(ps.length / 2)];
+    box.appendChild(el("p", "sub", c.rows.length + " พื้นที่มีราคา · ต่ำสุด " + fmt2(ps[0]) + " (" + PNAME[c.rows[0].t] + ") · มัธยฐาน " + fmt2(mid) + " · สูงสุด " + fmt2(mx) + " (" + PNAME[c.rows[c.rows.length - 1].t] + ")"));
+    var tb = el("table"), bd = el("tbody"), me = apType();
+    c.rows.forEach(function (r, i) {
+      var tr = el("tr", r.t === me ? "me" : null);
+      tr.appendChild(el("td", null, (i + 1) + ". " + PNAME[r.t]));
+      tr.appendChild(el("td", "num val" + (i === 0 ? " low" : ""), fmt2(r.p)));
+      tr.appendChild(el("td", "num", (r.p >= mid ? "+" : "") + ((r.p / mid - 1) * 100).toFixed(1) + "%"));
+      var bc = el("td", "barcell"), bar = el("span", "bar"); bar.style.width = (r.p / mx * 100).toFixed(1) + "%"; bc.appendChild(bar); tr.appendChild(bc);
+      tr.appendChild(el("td", "cl", r.ym !== latest ? ymLabel(r.ym) : ""));
+      bd.appendChild(tr);
+    });
+    tb.appendChild(bd); var w = el("div", "tblwrap"); w.appendChild(tb); box.appendChild(w);
+    box.appendChild(el("p", "sub", "% = ต่างจากค่ามัธยฐานของทุกจังหวัด · แถวที่ไฮไลต์คือจังหวัดที่เลือกอยู่"));
+    sec.appendChild(box);
+  }
   function renderMaterials() {
     var box = $("materials"); box.textContent = "";
     var central = state.prices.materials, regs = state.prices.materials_regions;
@@ -1494,6 +1600,8 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
       if (mu) { var ml = el("p", "law"); var ma = el("a", null, "ดูครบทุกรายการ ↗"); ma.href = mu.href; ma.target = "_blank"; ma.rel = "noopener noreferrer"; ml.appendChild(document.createTextNode(str(mat.source) + " ")); ml.appendChild(ma); msec.appendChild(ml); }
       box.appendChild(msec);
     }
+
+    renderAllProv(box);
 
     var rt = state.prices.retail;
     if (rt && Array.isArray(rt.rows)) Object.keys(state.prices).filter(function (k) { return /^retail\d+$/.test(k); }).sort().forEach(function (k) {
