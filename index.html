@@ -1602,6 +1602,19 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
       arr.forEach(function (r) { byIdx[r[0]] = r; });
       rg[1].forEach(function (c) { c.items.forEach(function (x) { var r = byIdx[i++]; if (!r) return; x.code = r[1]; if (fresh) { if (x.p !== r[2]) changed++; x.p = typeof r[2] === "number" ? r[2] : null; x.h = [r[3], r[4], r[5], r[6]]; } }); });
     });
+    if (Array.isArray(L.qm) && L.q && L.latest && L.latest["10"] === L.ym && Array.isArray(d.qm)) {
+      var oldQm = d.qm.slice(), nq = L.qm.map(ymIso), k = 0;
+      (d.cats || []).forEach(function (c) { c.items.forEach(function (x) {
+        var dbq = L.q[String(k++)], oq = Array.isArray(x.q) ? x.q : [];
+        if (!Array.isArray(dbq)) return;
+        x.q = nq.map(function (m, j) {
+          if (typeof dbq[j] === "number") return dbq[j];
+          for (var o = oldQm.length - 1; o >= 0; o--) if (oldQm[o] <= m) return typeof oq[o] === "number" ? oq[o] : null;
+          return null;
+        });
+      }); });
+      d.qm = nq;
+    }
     var iso = ymIso(L.ym);
     if (iso !== d.month) { d.month = iso; d.months = (L.months || []).map(ymIso); }
     state.cmpIdx = null; state.liveAt = iso;
