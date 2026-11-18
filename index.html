@@ -1371,7 +1371,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
       rows.forEach(function (x) {
         var tr = el("tr"); var nd = el("td", null, str(x.n));
         var ck = cmpKey(x.n), cl = cmpIndex()[ck];
-        var hc = codeFor(state.region, idxOf.get(x), x.p);
+        var hc = x.code || codeFor(state.region, idxOf.get(x), x.p);
         if (hc) { var hbtn = el("button", "cmpbtn", "ประวัติราคา"); hbtn.type = "button"; hbtn.addEventListener("click", function () { openHist(state.region, hc, str(x.n), str(x.u)); var bx = document.getElementById("histbox"); if (bx) bx.scrollIntoView({ behavior: "smooth", block: "start" }); }); nd.appendChild(hbtn); }
         if (cl && cl.length > 1) { var cb = el("button", "cmpbtn", "เทียบ " + cl.length + " พื้นที่"); cb.type = "button"; cb.setAttribute("aria-label", "เทียบราคา " + str(x.n) + " ทุกพื้นที่"); cb.addEventListener("click", function () { state.cmp = ck; renderMaterials(); var bx = document.getElementById("cmpbox"); if (bx) bx.scrollIntoView({ behavior: "smooth", block: "start" }); }); nd.appendChild(cb); }
         tr.appendChild(nd); tr.appendChild(el("td", "cl", str(x.u)));
@@ -1591,6 +1591,24 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     laws.sort(function (a, b) { return (a.order || 99) - (b.order || 99); }); state.laws = laws;
     state.loaded.items = state.loaded.rounds = true; clearTimeout(timer); state.error = null; renderAll();
   }).catch(onErr);
+  function ymIso(ym) { var y = Math.floor(ym / 100) - 543, m = ym % 100; return y + "-" + (m < 10 ? "0" : "") + m; }
+  function applyLive(L) {
+    var d = state.matc; if (!d || !L || !L.by_type || !L.ym) return;
+    var regs = [["ส่วนกลาง", d.cats || []]].concat(Object.keys(d.provinces || {}).map(function (k) { return [k, d.provinces[k]]; }));
+    var changed = 0;
+    regs.forEach(function (rg) {
+      var t = TPSO_TYPE[rg[0]], arr = t && L.by_type[String(t)]; if (!arr) return;
+      var fresh = L.latest && L.latest[String(t)] === L.ym, i = 0, byIdx = {};
+      arr.forEach(function (r) { byIdx[r[0]] = r; });
+      rg[1].forEach(function (c) { c.items.forEach(function (x) { var r = byIdx[i++]; if (!r) return; x.code = r[1]; if (fresh) { if (x.p !== r[2]) changed++; x.p = typeof r[2] === "number" ? r[2] : null; x.h = [r[3], r[4], r[5], r[6]]; } }); });
+    });
+    var iso = ymIso(L.ym);
+    if (iso !== d.month) { d.month = iso; d.months = (L.months || []).map(ymIso); }
+    state.cmpIdx = null; state.liveAt = iso;
+    renderAll();
+  }
+  fetch(SB + "/rest/v1/rpc/matc_live", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: "{}" })
+    .then(function (r) { return r.ok ? r.json() : null; }).then(applyLive).catch(function () {});
   initFeedback();
 
   function initFeedback() {
