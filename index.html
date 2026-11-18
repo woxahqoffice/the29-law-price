@@ -1281,7 +1281,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     var d = rows.map(function (r, i) { return (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(r[1]).toFixed(1); }).join(" ");
     var area = document.createElementNS(ns, "path"); area.setAttribute("d", d + " L" + X(rows.length - 1).toFixed(1) + " " + (H - B) + " L" + L + " " + (H - B) + " Z"); area.setAttribute("class", "ha"); svg.appendChild(area);
     var path = document.createElementNS(ns, "path"); path.setAttribute("d", d); path.setAttribute("class", "hl"); svg.appendChild(path);
-    rows.forEach(function (r, i) { var c = document.createElementNS(ns, "circle"); c.setAttribute("cx", X(i)); c.setAttribute("cy", Y(r[1])); c.setAttribute("r", rows.length > 60 ? 1.5 : 2.5); c.setAttribute("class", "hd"); var tt = document.createElementNS(ns, "title"); tt.textContent = ymLabel(r[0]) + " " + fmt2(r[1]) + " บาท/" + unit; c.appendChild(tt); svg.appendChild(c); });
+    rows.forEach(function (r, i) { var c = document.createElementNS(ns, "circle"); c.setAttribute("cx", X(i)); c.setAttribute("cy", Y(r[1])); c.setAttribute("r", rows.length > 60 ? 1.5 : 2.5); c.setAttribute("class", "hd"); var tt = document.createElementNS(ns, "title"); tt.textContent = ymLabel(r[0]) + " " + (unit === "K" ? "K = " + r[1].toFixed(3) : fmt2(r[1]) + " บาท/" + unit); c.appendChild(tt); svg.appendChild(c); });
     svg.setAttribute("role", "img"); svg.setAttribute("aria-label", "กราฟราคารายเดือน " + ymLabel(rows[0][0]) + " ถึง " + ymLabel(rows[rows.length - 1][0]));
     return svg;
   }
