@@ -1483,7 +1483,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
             var ps = by[x.code] || [], l = ps[0] || null, y = null;
             if (l) { var target = ymAdd(l.ym, -12); ps.forEach(function (p) { if (p.ym === target) y = p; }); }
             return { code: x.code, name: x.name, unit: x.unit, last: l, yago: y, ym: x.last_ym };
-          }).sort(function (a, b) { return (b.last ? 1 : 0) - (a.last ? 1 : 0); });
+          }).map(function (x, i) { x.i = i; x.sw = x.name.toLowerCase().indexOf(q) === 0 ? 1 : 0; return x; }).sort(function (a, b) { return (b.last ? 1 : 0) - (a.last ? 1 : 0) || b.sw - a.sw || a.i - b.i; });
           if (state.q === q) renderMaterials();
         })
         .catch(function () { state.apRes[key] = []; if (state.q === q) renderMaterials(); });
