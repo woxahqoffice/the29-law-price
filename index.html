@@ -168,6 +168,7 @@ h1 .soft { color: hsl(var(--muted-foreground)); }
 .cmpbox .bar { display: block; height: 6px; border-radius: 3px; background: hsl(var(--brand) / 0.55); min-width: 2px; }
 .cmpbox .barcell { width: 32%; }
 .cmpbox .low { color: hsl(142 60% 32%); }
+@media (max-width: 640px) { .cmpbox { padding: 12px; } .cmpbox .barcell, .cmpbox td:nth-child(3) { display: none; } .cmpbox td { padding: 6px 4px; } .cmpbox .cmpbtn { font-size: 12px; } }
 .sortrow { display: flex; align-items: center; gap: 8px; font-size: 13px; color: hsl(var(--muted-foreground)); }
 select, .sortrow select {
   font: inherit; font-size: 13px; color: hsl(var(--foreground)); cursor: pointer; appearance: none; height: 32px;
