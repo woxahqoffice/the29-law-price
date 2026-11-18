@@ -1815,6 +1815,16 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
       var kr = el("tr", "ktotal"); kr.appendChild(el("td", null, "ค่า K")); ["", "", "", ""].forEach(function () { kr.appendChild(el("td")); }); kr.appendChild(el("td", "num val", f3(first.c.K))); b2.appendChild(kr);
       t2.appendChild(b2); var w2 = el("div", "tblwrap"); w2.appendChild(t2); res.appendChild(w2);
     }
+    var series = [];
+    k.months.slice().reverse().forEach(function (m) { if (m < k.o) return; var c = kCalc(f, k.o, m); if (!c.miss) series.push([m, c.K]); });
+    if (series.length > 2) {
+      var hb = el("div", "histbox");
+      res.appendChild(el("h3", "kh3", "ค่า K ถ้าส่งงานแต่ละเดือน (เปิดซอง " + ymLabel(k.o) + ")"));
+      hb.appendChild(histChart(series, "K"));
+      var ks = series.map(function (x) { return x[1]; }), over = series.filter(function (x) { return x[1] > 1.04 || x[1] < 0.96; });
+      hb.appendChild(el("p", "sub", "สูงสุด " + f3(Math.max.apply(null, ks)) + " · ต่ำสุด " + f3(Math.min.apply(null, ks)) + " · เกินช่วง 0.96–1.04 (ได้ปรับราคา) " + over.length + " จาก " + series.length + " เดือน" + (over.length ? " เดือนแรกคือ " + ymLabel(over[0][0]) : "")));
+      res.appendChild(hb);
+    }
   }
   function renderAll() {
     renderTop();
