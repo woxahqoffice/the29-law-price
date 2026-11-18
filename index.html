@@ -967,6 +967,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     var by = {}, cmi = state.prices.cmi, hist = state.prices.cmi_hist;
     if (hist && Array.isArray(hist.points)) hist.points.forEach(function (p) { if (mIdx(p.m) != null) by[p.m] = Object.assign({ base: str(hist.base_default) }, p); });
     if (cmi && Array.isArray(cmi.series)) cmi.series.forEach(function (p) { if (mIdx(p.m) != null) by[p.m] = Object.assign({ base: str(cmi.base) || "2564" }, p); });
+    if (state.cmiLive && state.cmiLive["0"]) state.cmiLive["0"].forEach(function (r) { var m = ymIso(r[0]); if (mIdx(m) != null) by[m] = { m: m, v: Number(r[1]), yoy: r[3] == null ? null : Number(r[3]), base: "2564", url: "https://index-api.tpso.go.th/" }; });
     var pts = Object.keys(by).sort().map(function (k) { return by[k]; });
     linkBases(pts);
     return pts;
@@ -1090,6 +1091,11 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
   function renderPrices() {
     var box = $("prices"); box.textContent = "";
     var cmi = state.prices.cmi;
+    if (cmi && state.cmiLive && state.cmiLive["0"] && !cmi.liveSynced) {
+      var s0 = state.cmiLive["0"], lastY = Math.floor(s0[s0.length - 1][0] / 100);
+      cmi.series = s0.filter(function (r) { return Math.floor(r[0] / 100) === lastY; }).map(function (r) { return { m: ymIso(r[0]), v: Number(r[1]), yoy: r[3] == null ? null : Number(r[3]), url: "https://index-api.tpso.go.th/" }; });
+      cmi.liveSynced = true;
+    }
     if (!cmi || !Array.isArray(cmi.series) || !cmi.series.length) { box.appendChild(stateBox(state.error ? "โหลดข้อมูลไม่ได้" : "กำลังโหลดข้อมูลราคา…", state.error)); return; }
     var s = cmi.series.filter(function (p) { return typeof p.v === "number"; }).sort(function (a, b) { return str(a.m).localeCompare(str(b.m)); });
     var last = s[s.length - 1], prev = s[s.length - 2], first = s[0];
@@ -1100,6 +1106,25 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     if (mom != null) k.appendChild(kpiBox("เทียบเดือนก่อน", (mom > 0 ? "+" : "") + mom.toFixed(1) + "%", monLabel(prev.m) + " → " + monLabel(last.m), mom > 0 ? "up" : "down"));
     k.appendChild(kpiBox("ตั้งแต่ต้นปี", (ytd > 0 ? "+" : "") + ytd.toFixed(1) + "%", monLabel(first.m) + " → " + monLabel(last.m), ytd > 0 ? "up" : "down"));
     box.appendChild(k);
+    var CMIC = { "1": "ไม้และผลิตภัณฑ์ไม้", "2": "ซีเมนต์", "3": "ผลิตภัณฑ์คอนกรีต", "4": "เหล็กและผลิตภัณฑ์เหล็ก", "5": "กระเบื้อง", "6": "วัสดุฉาบผิว", "7": "สุขภัณฑ์", "8": "อุปกรณ์ไฟฟ้าและประปา", "9": "วัสดุก่อสร้างอื่น ๆ" };
+    if (state.cmiLive && state.cmiLive["1"]) {
+      var csec = el("section", "psec"); csec.appendChild(el("h2", null, "ดัชนีรายหมวด"));
+      var lr = state.cmiLive["0"][state.cmiLive["0"].length - 1];
+      csec.appendChild(el("div", "sub", "เดือน " + ymLabel(lr[0]) + " · ฐานปี 2564 = 100 · ดึงจาก index-api.tpso.go.th อัปเดตเองทุกเดือน"));
+      var cw = el("div", "tblwrap"), ct = el("table", "rt mcomp"), chd = el("thead"), chr = el("tr");
+      ["หมวด", "ดัชนี", "เทียบเดือนก่อน", "เทียบปีก่อน", "5 ปีก่อน"].forEach(function (h, i) { chr.appendChild(el("th", i ? "num" : null, h)); }); chd.appendChild(chr); ct.appendChild(chd);
+      var cbd = el("tbody");
+      ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].forEach(function (cd) {
+        var ser = state.cmiLive[cd]; if (!ser || !ser.length) return;
+        var r = ser[ser.length - 1], back = null; ser.forEach(function (x) { if (x[0] === ymAdd(r[0], -60)) back = x; });
+        var tr = el("tr", cd === "0" ? "ktotal" : null); tr.appendChild(el("td", null, cd === "0" ? "ดัชนีรวม" : CMIC[cd]));
+        tr.appendChild(el("td", "num val", Number(r[1]).toFixed(1)));
+        [r[2], r[3]].forEach(function (v) { tr.appendChild(el("td", "num " + (v > 0 ? "up" : v < 0 ? "down" : ""), v == null ? "—" : (v > 0 ? "+" : "") + Number(v).toFixed(1) + "%")); });
+        tr.appendChild(back ? chgCell(Number(r[1]), Number(back[1]), ymLabel(back[0])) : el("td", "num", "—"));
+        cbd.appendChild(tr);
+      });
+      ct.appendChild(cbd); cw.appendChild(ct); csec.appendChild(cw); box.appendChild(csec);
+    }
 
     var pts = allPoints(), lastI = mIdx(pts[pts.length - 1].m);
     var rg = RANGES.filter(function (r) { return r[0] === state.range; })[0] || RANGES[1];
@@ -1898,6 +1923,7 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     state.cmpIdx = null; state.liveAt = iso;
     renderAll();
   }
+  fetch(SB + "/rest/v1/rpc/cmi_all", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: "{}" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) { if (d && d["0"] && d["0"].length) { state.cmiLive = d; if (state.prices.cmi) state.prices.cmi.liveSynced = false; renderAll(); } }).catch(function () {});
   fetch(SB + "/rest/v1/rpc/matc_live", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: "{}" })
     .then(function (r) { return r.ok ? r.json() : null; }).then(applyLive).catch(function () {});
   initFeedback();
