@@ -318,6 +318,7 @@ table.rcomp thead, table.mcomp thead { display: none; }
 table.rcomp tr.ghead td, table.mcomp tr.ghead td { font-size: 12px; font-weight: 500; color: hsl(var(--muted-foreground)); padding-top: 12px; padding-bottom: 8px; background: hsl(var(--muted)); }
 table.rcomp tbody tr.ghead:hover td, table.mcomp tbody tr.ghead:hover td { background: hsl(var(--muted)); }
 table.rcomp td.best { font-weight: 600; color: hsl(var(--ok)); }
+.oldp { font-size: 11px; font-weight: 400; color: var(--muted, #8a8f98); line-height: 1.3; margin-top: 2px; }
 table.rcomp th.num, table.rcomp td.num { text-align: right; white-space: nowrap; padding-left: 16px; }
 table.rt td .isrc { font-size: 12px; color: hsl(var(--muted-foreground)); margin-top: 4px; }
 table.rt tbody tr:not(.grp):not(.ghead):hover td { background: hsl(var(--accent) / 0.6); }
@@ -1224,11 +1225,14 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
     }
   }
 
-  function chgCell(cur, old, monthLbl) {
+  function chgCell(cur, old, monthLbl, showOld) {
     if (typeof cur !== "number" || typeof old !== "number" || !old) return el("td", "num", "—");
     var c = (cur / old - 1) * 100, r = Math.round(c * 10) / 10;
-    var td = el("td", "num " + (r > 0 ? "up" : r < 0 ? "down" : ""), r === 0 ? "คงที่" : (r > 0 ? "+" : "") + r.toFixed(1) + "%");
-    td.title = monthLbl + ": " + old.toLocaleString("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " บาท"; return td;
+    var td = el("td", "num " + (r > 0 ? "up" : r < 0 ? "down" : ""));
+    td.appendChild(el("span", "pctv", r === 0 ? "คงที่" : (r > 0 ? "+" : "") + r.toFixed(1) + "%"));
+    var oldTxt = old.toLocaleString("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (showOld) td.appendChild(el("div", "oldp", oldTxt));
+    td.title = monthLbl + ": " + oldTxt + " บาท"; return td;
   }
   function cmpKey(n) { return str(n).toLowerCase().replace(/\s+/g, ""); }
   function cmpIndex() {
@@ -1427,12 +1431,12 @@ footer .warn-note { color: hsl(var(--muted-foreground)); }
         if (cl && cl.length > 1) { var cb = el("button", "cmpbtn", "เทียบ " + cl.length + " พื้นที่"); cb.type = "button"; cb.setAttribute("aria-label", "เทียบราคา " + str(x.n) + " ทุกพื้นที่"); cb.addEventListener("click", function () { state.cmp = ck; renderMaterials(); var bx = document.getElementById("cmpbox"); if (bx) bx.scrollIntoView({ behavior: "smooth", block: "start" }); }); nd.appendChild(cb); }
         tr.appendChild(nd); tr.appendChild(el("td", "cl", str(x.u)));
         tr.appendChild(el("td", "num val", typeof x.p === "number" ? x.p.toLocaleString("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—"));
-        HL.forEach(function (l, i) { tr.appendChild(chgCell(x.p, x.h ? x.h[i] : null, d.months ? monLabel(d.months[i]) : l)); });
+        HL.forEach(function (l, i) { tr.appendChild(chgCell(x.p, x.h ? x.h[i] : null, d.months ? monLabel(d.months[i]) : l, true)); });
         if (QM) {
           var qv = Array.isArray(x.q) ? x.q : [], fi = -1;
           for (var qi = 0; qi < qv.length; qi++) if (typeof qv[qi] === "number") { fi = qi; break; }
-          var c5 = chgCell(x.p, fi >= 0 ? qv[fi] : null, fi >= 0 ? monLabel(QM[fi]) : "");
-          if (fi > 0) { c5.textContent += "*"; c5.title += " (เริ่มมีข้อมูล " + monLabel(QM[fi]) + ")"; }
+          var c5 = chgCell(x.p, fi >= 0 ? qv[fi] : null, fi >= 0 ? monLabel(QM[fi]) : "", true);
+          if (fi > 0 && c5.firstChild) { c5.firstChild.textContent += "*"; c5.title += " (เริ่มมีข้อมูล " + monLabel(QM[fi]) + ")"; }
           tr.appendChild(c5);
           var sd = el("td", "spk"); sd.appendChild(sparkline(qv, QM, x.u)); tr.appendChild(sd);
         }
